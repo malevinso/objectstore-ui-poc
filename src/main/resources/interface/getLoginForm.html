@@ -2,22 +2,46 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="/ui/interface/gui.css" />
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    
   </head>
-  <body>
+    <body>
+     <script>
+         function clicker(){
+           msg.innerHTML="Please Wait while page loads...";
+         };
+         function submitMyForm(url){
+           clicker();
+           document.forms[0].action=url;
+           document.forms[0].submit();
+         };
+      </script>
+      <form id="form" class="elegant-aero" action="/interface/getLoginResponse" method="post">
+		  <div class="topnav">
+		         <a href="#" onclick="submitMyForm('/ui/interface/mainMenu.html');">Home</a>
+		           <a   class="active"             href="#" onclick="submitMyForm('/interface/login');">Login</a>
+		         <a                href="#" onclick="submitMyForm('/interface/logout');">Logout</a>
+		         <a                href="#" onclick="submitMyForm('/ui/interface/getOSValuesForm.html');">ObjectStore Values</a>
+		         <div>$message$ </div>
+		  </div>
+	
 
-    <form class="elegant-aero" action="/interface/getLoginResponse" method="post">
-      <H1 align="center">Login Menu
-      </H1>
-
+<div style="padding-left:16px">
+  <h2>Login Menu</h2>
+  <p>Enter in credentials</p>
+</div>
+    
     
       <div class="container" align="left">
       
        <label>
         <span>UserName:</span>
-        <input type="text"  value="" name="userName">
+        <input type="text"  value="$user$" name="userName">
       </label>
+      
+      <label>
+        <span>password:</span>
+        <input type="password"  value="$pass$" name="password">
+      </label>
+      
       
       <label>
         <span>&nbsp;</span> 
@@ -25,7 +49,7 @@
         <input type="submit" class="button" formaction="/ui/interface/mainMenu.html" value="Main Menu">
       </label>  
     </div>
-        <input type="hidden" id="msg" name="msg" value="$message$"  />
+        <input type="hidden" id="msg" name="msg" value=""  />
     
     <input type="hidden" id="sessionId" name="sessionId" value="$sessionId$" />
     </form>

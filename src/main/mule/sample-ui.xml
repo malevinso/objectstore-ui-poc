@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:os="http://www.mulesoft.org/schema/mule/os"
-	xmlns:st="http://www.mulesoft.org/schema/mule/st"
-	xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:st="http://www.mulesoft.org/schema/mule/st" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
 http://www.mulesoft.org/schema/mule/st http://www.mulesoft.org/schema/mule/st/current/mule-st.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="a99c690a-1322-4708-a31e-2fcf03d4e325" >
 		<http:listener-connection host="0.0.0.0" port="8081" />
 	</http:listener-config>
@@ -17,7 +18,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 	<os:object-store name="Object_store1" doc:name="Object store" doc:id="14ea1a84-6f29-49af-bd7a-eed912364646" maxEntries="5000" entryTtl="5000" entryTtlUnit="MINUTES" expirationInterval="15" />
 	<flow name="generic-html" doc:id="e61286ae-aa84-42c2-a14f-c7c4e0c367f4">
 		<http:listener doc:name="Listener" doc:id="6a08f0c2-4074-41d4-ae45-705508208f2a" config-ref="HTTP_Listener_config" path="/ui/interface/*" />
-		<ee:transform doc:name="Transform Message" doc:id="c1a80906-a78f-4301-beb6-af4ad895a5d5">
+		<ee:transform doc:name="set-session-id" doc:id="c1a80906-a78f-4301-beb6-af4ad895a5d5">
 					<ee:message>
 					</ee:message>
 					<ee:variables>
@@ -27,260 +28,134 @@ output application/java
 if (!isEmpty(payload)) (if (!isEmpty(payload.sessionId)) payload.sessionId else "none") else "none"]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-		<ee:transform doc:name="Transform Message" doc:id="4f9845c8-0ade-4ca0-910a-96606540661f">
+		<ee:transform doc:name="set-file-to-load" doc:id="4f9845c8-0ade-4ca0-910a-96606540661f">
 			<ee:message>
 			</ee:message>
 			<ee:variables>
-				<ee:set-variable variableName="defaultPeriod"><![CDATA[%dw 2.0
-output application/java
----
-now() as String {"format"  : "yyyy-MM"}]]></ee:set-variable>
 				<ee:set-variable variableName="fileToLoad" ><![CDATA[output application/java
 ---
 attributes.requestUri[3 to sizeOf(attributes.requestUri)-1]]]></ee:set-variable>
 			
 </ee:variables>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="2287a295-8c65-46a5-a029-70bd83d9dfc0" message="Trying to read this ui file: #[vars.fileToLoad]"/>
-		<choice doc:name="Choice" doc:id="75f14485-279e-46ea-a307-0a646318d013" >
-			<when expression='#[vars.fileToLoad contains "html"]'>
-				<os:retrieve doc:name="Retrieve" doc:id="fe9a4b5d-9473-4caa-a101-efb048dede15" key='#[vars.sessionId default "none"]' objectStore="Object_store" target="user">
+		<logger level="INFO" doc:name="Log fileToLoad" doc:id="2287a295-8c65-46a5-a029-70bd83d9dfc0" message="Trying to read this ui file: #[vars.fileToLoad]"/>
+		<choice doc:name="Resource Type?" doc:id="75f14485-279e-46ea-a307-0a646318d013" doc:description='Used to determine which  type of "resource" this is,  options are "html", "css" and "other" e.g., Images etc.'>
+			<when expression='#[/* HTML */ vars.fileToLoad contains "html"]'>
+				<os:retrieve doc:name="UserName" doc:id="fe9a4b5d-9473-4caa-a101-efb048dede15" key='#[vars.sessionId default "none"]' objectStore="Object_store" target="user">
 			<os:default-value><![CDATA[none]]></os:default-value>
 		</os:retrieve>
-				<st:parse-template doc:name="Parse template" doc:id="8973c8d0-8e3a-4ec2-86d1-eb6161fd76be" templateFile='#[vars.fileToLoad]' config-ref="St_Config" outputMimeType="text/html">
+				<st:parse-template doc:name="vars.fileToLoad" doc:id="8973c8d0-8e3a-4ec2-86d1-eb6161fd76be" templateFile='#[vars.fileToLoad]' config-ref="St_Config" outputMimeType="text/html">
 			<st:maps>
 				<st:map key="message" value='#["Signed in as : " ++ (vars.user as String default "not signed in")]
 ' />
 						<st:map key="sessionId" value="#[vars.sessionId]" />
 			</st:maps>
 		</st:parse-template>
-				<logger level="DEBUG" doc:name="Logger" doc:id="e0aa98d6-360e-43f7-9f1d-d3e19b619373" message="after parse template #[payload]" />
-				<set-payload value="#[payload]" doc:name="Set Payload" doc:id="60e851fc-abf9-4837-a511-af0908ef53c0" mimeType="text/html"/>
+				<set-payload value="#[payload]" doc:name="text/html" doc:id="60e851fc-abf9-4837-a511-af0908ef53c0" mimeType="text/html"/>
 			</when>
-			<when expression='#[vars.fileToLoad contains "css"]'>
-				<file:read doc:name="Copy_of_Read" doc:id="1407219f-cb86-489c-8391-921df997a688" path='#["${app.home}" ++ vars.fileToLoad]' />
-				<set-payload value="#[payload]" doc:name="Set Payload" doc:id="3e339801-a274-48a5-949a-7f6b9620eca6" mimeType="text/css" />
+			<when expression='#[/* CSS */ vars.fileToLoad contains "css"]'>
+				<file:read doc:name="CSS" doc:id="1407219f-cb86-489c-8391-921df997a688" path='#["${app.home}" ++ vars.fileToLoad]' />
+				<set-payload value="#[payload]" doc:name="text/css" doc:id="3e339801-a274-48a5-949a-7f6b9620eca6" mimeType="text/css" />
 			</when>
 			<otherwise >
-				<file:read doc:name="Read" doc:id="4e8a6e70-cc83-4128-9857-2e4aaae8a0e2" path='#["${app.home}" ++ vars.fileToLoad]'/>
+				<file:read doc:name="OTHER" doc:id="4e8a6e70-cc83-4128-9857-2e4aaae8a0e2" path='#["${app.home}" ++ vars.fileToLoad]'/>
 			</otherwise>
 		</choice>
 	
 </flow>
-	<flow name="set-os-value" doc:id="3c4763dc-f89c-4292-954a-8a5d1a14cb3e" >
-		<http:listener doc:name="Listener" doc:id="bd62ba3f-4459-4247-baa3-965e6c1b57c8" config-ref="HTTP_Listener_config" path="set"/>
-		<os:store doc:name="Store" doc:id="b51ee659-45da-4538-8e96-b41f8401a596" key='#[attributes.queryParams.key default "none"]' objectStore="Object_store1"/>
-		<ee:transform doc:name="Transform Message" doc:id="4c4e4cc3-c898-414f-a2b9-80b3f17f6ba5" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"message":"success"
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-	</flow>
-	<flow name="get-os-value" doc:id="2297a8d4-4060-4b28-be57-dcfea5051f2e" >
-		<http:listener doc:name="Listener" doc:id="63099a90-499c-4375-aa5d-9fefd105b658" config-ref="HTTP_Listener_config" path="get"/>
-		<os:retrieve-all doc:name="Retrieve all" doc:id="1f3703c6-7c74-4128-97f5-7a8e0c501330" objectStore="Object_store1"/>
-		<ee:transform doc:name="Transform Message" doc:id="777714c7-828c-465e-be7a-c534b176fe38" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-payload mapObject(val,key,idx)-> {
-	(key) :val
-	
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-	</flow>
-	<flow name="sample-uiFlow" doc:id="45b0d69f-d627-4ad3-a508-2559a14f139b" >
-		<http:listener doc:name="Listener" doc:id="a829cca6-621f-4ce1-baed-9e7820554b2a" config-ref="HTTP_Listener_config" path="clear"/>
-		<os:clear doc:name="Clear" doc:id="b3121657-320d-4729-9cbb-9a5cf7a9ae64" objectStore="Object_store1"/>
-		<ee:transform doc:name="Transform Message" doc:id="31eb0247-e795-46c3-8d37-904ff283a925" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"message" : "success"
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-	</flow>
-	<flow name="getReceipts" doc:id="5bd6719b-66c2-477e-b5cb-a035c401ac1d" >
-		<http:listener doc:name="Listener" doc:id="d8b88765-254c-4c23-a872-889ec185ec1d" config-ref="HTTP_Listener_config" path="/interface/getReceipts"/>
-		<ee:transform doc:name="Transform Message" doc:id="ce9af352-13e4-4a5b-8edd-95b0c0932178" >
-			<ee:message >
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="receiptResponse" ><![CDATA[%dw 2.0
-output application/java
----
-"Receipts Here for " ++ payload.period ++ ", " ++ payload.project]]></ee:set-variable>
-				<ee:set-variable variableName="fileToLoad" ><![CDATA[%dw 2.0
-output application/java
----
-"/interface/getReceiptsResponse.html"]]></ee:set-variable>
-				<ee:set-variable variableName="sessionId" ><![CDATA[%dw 2.0
-output application/java
----
-payload.sessionId default ""]]></ee:set-variable>
-			
-</ee:variables>
-		</ee:transform>
-		<os:retrieve doc:name="Retrieve" doc:id="ef8f429f-01ba-4c2a-a006-dcb922920a4f" key="#[vars.sessionId]" objectStore="Object_store">
-			<os:default-value ><![CDATA[none]]></os:default-value>
-		</os:retrieve>
-		<st:parse-template doc:name="Parse template" doc:id="0444e511-f997-418f-baec-c3a5ab2b6ae2" config-ref="St_Config" templateFile="/interface/getReceiptsResponse.html">
+	<flow name="login" doc:id="bc96a7fc-22c3-4f18-8723-d24a10e44afc" >
+		<http:listener doc:name="/interface/login" doc:id="02861df6-6aed-47a8-8830-9855cc688d66" config-ref="HTTP_Listener_config" path="/interface/login"/>
+		<st:parse-template doc:name="Parse template" doc:id="401cbab4-695d-4340-952e-ceb43a47e78e" templateFile="/interface/getLoginForm.html" config-ref="St_Config">
 			<st:maps >
-				<st:map key="receiptResponse" value="#[vars.receiptResponse]" />
-				<st:map key="sessionId" value="#[vars.sessionId]" />
+				<st:map key="user" value='#[vars.user default ""]' />
+				<st:map key="pass" value='#[vars.pass default ""]' />
+				<st:map key="message" value='#[vars.message default ""]' />
 			</st:maps>
 		</st:parse-template>
-		<set-payload value="#[payload]" doc:name="Copy_of_Set Payload" doc:id="6ed64378-d34b-4f95-9ba5-78ff347fd340" mimeType="text/html" />
-	
-</flow>
-<flow name="login" doc:id="e20ab8e1-7ace-4fc1-9e15-cbc052e21837" >
-		<http:listener doc:name="Listener" doc:id="f482d666-b54e-4c26-af67-fae242a2760a" config-ref="HTTP_Listener_config" path="/interface/getLoginResponse"/>
-		<ee:transform doc:name="Transform Message" doc:id="3e066de4-9b55-4965-9ecb-8d5de14774df" >
-			<ee:message >
+		<set-payload value="#[payload]" doc:name="text/html" doc:id="7acc08ff-a6fe-4baf-9337-7d200a96a8f6" mimeType="text/html" />
+	</flow>
+	<flow name="getLoginResponse" doc:id="e20ab8e1-7ace-4fc1-9e15-cbc052e21837" >
+		<http:listener doc:name="getLoginResponse" doc:id="f482d666-b54e-4c26-af67-fae242a2760a" config-ref="HTTP_Listener_config" path="/interface/getLoginResponse"/>
+		<ee:transform doc:name="set-vars" doc:id="3e066de4-9b55-4965-9ecb-8d5de14774df">
+			<ee:message>
 			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="project" ><![CDATA[%dw 2.0
-output application/java
----
-payload.project]]></ee:set-variable>
-				<ee:set-variable variableName="period" ><![CDATA[%dw 2.0
-output application/java
----
-payload.period]]></ee:set-variable>
-				<ee:set-variable variableName="fileToLoad" ><![CDATA[%dw 2.0
+			<ee:variables>
+				<ee:set-variable variableName="fileToLoad"><![CDATA[%dw 2.0
 output application/java
 ---
 "/interface/getLoginResponse.html"]]></ee:set-variable>
-				<ee:set-variable variableName="loginResponse" ><![CDATA[%dw 2.0
+				<ee:set-variable variableName="loginResponse"><![CDATA[%dw 2.0
 output application/java
 ---
 payload.userName default ""  ++ " successfully Logged in"]]></ee:set-variable>
-				<ee:set-variable variableName="user" ><![CDATA[%dw 2.0
+				<ee:set-variable variableName="user"><![CDATA[%dw 2.0
 output application/java
 ---
 payload.userName default "not signed in"]]></ee:set-variable>
-				<ee:set-variable variableName="sessionId" ><![CDATA[%dw 2.0
+				<ee:set-variable variableName="sessionId"><![CDATA[%dw 2.0
 output application/java
 ---
 if (!isEmpty(payload.userName))  uuid() else "none"]]></ee:set-variable>
+				<ee:set-variable variableName="pass"><![CDATA[%dw 2.0
+output application/java
+---
+payload.password default "not entered"]]></ee:set-variable>
 			
 
 </ee:variables>
 		</ee:transform>
-		<os:store doc:name="Store" doc:id="dd7e5e19-41ba-441a-8ab4-637b84319a07" key="#[vars.sessionId]" failOnNullValue="false" objectStore="Object_store">
+		<validation:is-true doc:name="Is true" doc:id="9348aa0f-eb0c-48ee-a5de-fa1dbb0608df" expression='#[upper(vars.user) == "ANDRE" and upper(vars.pass) == "BANDRE"  ]' message="Invalid Username or Password - try Again"/>
+		<os:store doc:name="save-user-name" doc:id="dd7e5e19-41ba-441a-8ab4-637b84319a07" key="#[vars.sessionId]" failOnNullValue="false" objectStore="Object_store">
 			<os:value ><![CDATA[#[vars.user]]]></os:value>
 		</os:store>
-		<logger level="INFO" doc:name="Logger" doc:id="c77394c3-8fa4-43a4-8d28-86343fcff276" message="Project Selected #[vars.project]  #[vars.period]"/>
-		<st:parse-template doc:name="Parse template" doc:id="f4efb001-06c3-404f-9932-edc9956c91b1" templateFile="/interface/getLoginResponse.html" config-ref="St_Config">
-			<st:maps >
-				<st:map key="loginResponse" value="#[vars.loginResponse]" />
-				<st:map key="sessionId" value="#[vars.sessionId]" />
-			</st:maps>
-		</st:parse-template>
-		<set-payload value="#[payload]" doc:name="Copy_of_Set Payload" doc:id="0efeece9-2893-4098-afa1-f1cf9ded7476" mimeType="text/html" />
+		<ee:transform doc:name="Transform Message" doc:id="58b701ea-e587-485d-b9a9-8adcdf06e9c8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/x-www-form-urlencoded
+---
+{
+	sessionId: vars.sessionId
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="message" ><![CDATA[%dw 2.0
+output application/java
+---
+"Signed in as " ++ vars.user]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="POST" doc:name="Request" doc:id="dd41c8a7-6d16-4066-990a-21154e29b64f" url="http://localhost:8081/ui/interface/mainMenu.html"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="a0c9a6ba-d82b-4176-981a-e8dc99398905" >
+				<ee:transform doc:name="Transform Message" doc:id="6c31932d-a742-4ba5-a3b9-9567919c8e3d" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="message" ><![CDATA[%dw 2.0
+output application/java
+---
+"Invalid user or password"]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<flow-ref doc:name="login" doc:id="b6231e54-5903-4571-a57b-566f7250aacc" name="login"/>
+			</on-error-continue>
+		</error-handler>
 	
+
 </flow>
 	<flow name="logout" doc:id="b33d6d81-e293-4d9b-b53f-1878c7d02109" >
 		<http:listener doc:name="Listener" doc:id="8f84cb77-5fa9-4d03-976a-8b865778ef00" config-ref="HTTP_Listener_config" path="/interface/logout"/>
 		<try doc:name="Try" doc:id="06142f40-aaba-4b62-b6b8-67c0995364d9" >
-			<os:remove doc:name="Remove" doc:id="23bb0b1b-60ce-47c5-9b1d-c44dd543925a" key="user" objectStore="Object_store" />
+			<os:remove doc:name="Remove User" doc:id="23bb0b1b-60ce-47c5-9b1d-c44dd543925a" key="#[vars.sessionId]" objectStore="Object_store" />
 			<error-handler >
 				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="3f4f37d8-26d9-49ee-823e-640ca9172b37" />
 			</error-handler>
 		</try>
 		<http:request method="GET" doc:name="Request" doc:id="31cd4408-cc24-47b4-be88-ba4339cdfb18" url="http://localhost:8081/ui/interface/mainMenu.html"/>
 	</flow>
-	<flow name="getOSPayload" doc:id="0329c526-ab0f-45c1-b8df-1f2fcbb2a969" >
-		<http:listener doc:name="Listener" doc:id="bb77cf80-c3a8-4c8f-abb2-803f4daa9241" config-ref="HTTP_Listener_config" path="/interface/getOSPayload"/>
-		<os:retrieve doc:name="Retrieve" doc:id="fddf0de0-336f-4dfe-8537-96d018277ac5" key="#[attributes.queryParams.key]" objectStore="Object_store1">
-			<os:default-value ><![CDATA[NONE]]></os:default-value>
-		</os:retrieve>
-		<ee:transform doc:name="Transform Message" doc:id="0398d16e-15d7-4568-bf8b-3121b01f4f4a" >
-			<ee:message >
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="osPayload" ><![CDATA[%dw 2.0
-output application/java
-var mainPayload=payload
----
-write(mainPayload.omsRequest.payload,"application/json")]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<st:parse-template doc:name="Parse template" doc:id="93606977-5211-4074-bcc9-41b2ff9bf03e" templateFile="/interface/getOSPayloadResponse.html" config-ref="St_Config">
-			<st:maps >
-				<st:map key="payloadResponse" value="#[vars.osPayload]" />
-			</st:maps>
-		</st:parse-template>
-		<set-payload value="#[payload]" doc:name="Copy_of_Set Payload" doc:id="ed2d675f-6f3e-4dce-b868-bb6b9e037477" mimeType="text/html" />
-	</flow>
-	<flow name="generate-some-keys" doc:id="003066b5-be2a-4950-a511-46f818691152" >
-		<http:listener doc:name="Listener" doc:id="4e2088f1-683d-47fb-9838-b84ef266474e" config-ref="HTTP_Listener_config" path="gen"/>
-		<scripting:execute engine="groovy" doc:name="Execute" doc:id="d073f628-8757-4dbc-b1e2-e8b727b1e0fa" >
-			<scripting:code ><![CDATA[List<Integer> list = new ArrayList<Integer>();
-
-for (i = 0; i <= max; i++) {
-   list.add(i)
-}
-
-return list;
-]]></scripting:code>
-			<scripting:parameters ><![CDATA[#[{ max: attributes.queryParams.size as Number}]]]></scripting:parameters>
-		</scripting:execute>
-		<foreach doc:name="For Each" doc:id="0a8e0ccc-52ca-4e3f-aa13-14729997e15b" >
-			<os:store doc:name="Store" doc:id="4e61d3c8-be89-4a7c-9607-30793a339253" key="#[uuid()]" objectStore="Object_store1">
-				<os:value ><![CDATA[#[{
-  "creationTimeStamp": now() as String,
-  "omsRequest": {
-    "path": "api/OmsInvoiceUpdate",
-    "payload": {
-        "OrderNumber": "grb123458396835-1",
-        "StatusCode": "DELSAP",
-        "PONumber": "1000517410",
-        "SiteCode": "Gracobaby",
-        "TimestampUTC": "2020-07-21T13:26:31.42Z",
-        "GtinsToUpdate": [
-          {
-            "ID": 104203,
-            "Quantity": "1.000"
-          },
-          {
-            "ID": 104204,
-            "Quantity": "1.000"
-          }
-        ]
-      },
-    "retryCount": 5,
-    "correlationId": uuid(),
-    "splunkInterface": "invoice-erp-to-oms"
-  }
-}]]]></os:value>
-			</os:store>
-		</foreach>
-		<logger level="INFO" doc:name="Logger" doc:id="35fbc789-1d86-40df-9990-e932ad21f04b" message="LIst Size #[sizeOf(payload)]"/>
-		<ee:transform doc:name="Transform Message" doc:id="d070c123-3d28-45a7-b563-2f8613f40952" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"message" : "success"
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-	</flow>
-	<flow name="getObjectStoreKeys" doc:id="a92d0750-5eaf-459c-bca9-146c4bee8496" >
-		<http:listener doc:name="Copy_of_Listener" doc:id="fd874352-2cab-43f0-bf13-ca6033aeed00" config-ref="HTTP_Listener_config" path="/interface/getValues" />
-		<ee:transform doc:name="Copy_of_Transform Message" doc:id="3836103e-1bce-4361-ba8c-4557c20eb2f5">
+	<flow name="getValues" doc:id="a92d0750-5eaf-459c-bca9-146c4bee8496">
+		<http:listener doc:name="Listener" doc:id="fd874352-2cab-43f0-bf13-ca6033aeed00" config-ref="HTTP_Listener_config" path="/interface/getValues" />
+		<ee:transform doc:name="set-vars" doc:id="3836103e-1bce-4361-ba8c-4557c20eb2f5">
 			<ee:message />
 			<ee:variables>
 				<ee:set-variable variableName="fileToLoad"><![CDATA[%dw 2.0
@@ -291,17 +166,25 @@ output application/java
 output application/java
 ---
 payload.sessionId default ""]]></ee:set-variable>
+				<ee:set-variable variableName="startDateTime"><![CDATA[%dw 2.0
+output application/java
+---
+payload.StartDateTime]]></ee:set-variable>
+				<ee:set-variable variableName="endDateTime"><![CDATA[%dw 2.0
+output application/java
+---
+payload.EndDateTime]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<os:retrieve doc:name="Copy_of_Retrieve" doc:id="b91b4ba8-67d8-4992-8a35-68db9f30b5d5" key="#[vars.sessionId]" objectStore="Object_store">
+		<os:retrieve doc:name="userName" doc:id="b91b4ba8-67d8-4992-8a35-68db9f30b5d5" key="#[vars.sessionId]" objectStore="Object_store" target="userName">
 			<os:default-value><![CDATA[none]]></os:default-value>
 		</os:retrieve>
-		<flow-ref doc:name="get-os-value" doc:id="050d8da1-cc8a-453c-be28-a0d7c9a64bd0" name="get-os-value"/>
-		<ee:transform doc:name="Transform Message" doc:id="ca20c469-65bd-45f1-8173-e4e321682025">
+		<flow-ref doc:name="get-os-value" doc:id="050d8da1-cc8a-453c-be28-a0d7c9a64bd0" name="get" />
+		<ee:transform doc:name="create-div-table" doc:id="ca20c469-65bd-45f1-8173-e4e321682025">
 			<ee:message>
 			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="osValues" ><![CDATA[%dw 2.0
+			<ee:variables>
+				<ee:set-variable variableName="osValues"><![CDATA[%dw 2.0
 output text/plain
 ---
 "<div class=\"rTable\"><div class=\"rTableRow\">" ++
@@ -329,12 +212,153 @@ output text/plain
 "</div>" ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<st:parse-template doc:name="Copy_of_Parse template" doc:id="c15acdd8-0438-477f-9648-04a288ebf9bb" config-ref="St_Config" templateFile="/interface/getOSValuesResponse.html" >
-			<st:maps >
-				<st:map key="objectStoresResponse" value='#[vars.osValues]' />
+		<st:parse-template doc:name="/interface/getOSValuesResponse.html" doc:id="c15acdd8-0438-477f-9648-04a288ebf9bb" config-ref="St_Config" templateFile="/interface/getOSValuesResponse.html">
+			<st:maps>
+				<st:map key="objectStoresResponse" value="#[vars.osValues]" />
 				<st:map key="sessionId" value="#[vars.sessionId]" />
 			</st:maps>
 		</st:parse-template>
-		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="83b0c423-83b8-4086-9e3b-a90e4019a5a4" mimeType="text/html" />
+		<set-payload value="#[payload]" doc:name="text/html" doc:id="83b0c423-83b8-4086-9e3b-a90e4019a5a4" mimeType="text/html" />
+	</flow>
+	<flow name="getOSPayload" doc:id="0329c526-ab0f-45c1-b8df-1f2fcbb2a969" >
+		<http:listener doc:name="Listener" doc:id="bb77cf80-c3a8-4c8f-abb2-803f4daa9241" config-ref="HTTP_Listener_config" path="/interface/getOSPayload"/>
+		<os:retrieve doc:name="userName" doc:id="fddf0de0-336f-4dfe-8537-96d018277ac5" key="#[attributes.queryParams.key]" objectStore="Object_store1">
+			<os:default-value ><![CDATA[NONE]]></os:default-value>
+		</os:retrieve>
+		<ee:transform doc:name="stringify-json" doc:id="0398d16e-15d7-4568-bf8b-3121b01f4f4a" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="osPayload" ><![CDATA[%dw 2.0
+output application/java
+var mainPayload=payload
+---
+write(mainPayload.omsRequest.payload,"application/json")]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<st:parse-template doc:name="getOSPayloadResponse.html" doc:id="93606977-5211-4074-bcc9-41b2ff9bf03e" templateFile="/interface/getOSPayloadResponse.html" config-ref="St_Config">
+			<st:maps >
+				<st:map key="payloadResponse" value="#[vars.osPayload]" />
+			</st:maps>
+		</st:parse-template>
+		<set-payload value="#[payload]" doc:name="text/html" doc:id="ed2d675f-6f3e-4dce-b868-bb6b9e037477" mimeType="text/html" />
+	</flow>
+	<flow name="get" doc:id="2297a8d4-4060-4b28-be57-dcfea5051f2e" doc:description="This is not used directly as a URL endpoint">
+		<http:listener doc:name="Listener" doc:id="63099a90-499c-4375-aa5d-9fefd105b658" config-ref="HTTP_Listener_config" path="get" />
+		<ee:transform doc:name="set-vars" doc:id="f273767f-7032-45c0-9ffc-7fb9f11c049c">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="startDateTime"><![CDATA[%dw 2.0
+output application/java
+---
+if (isEmpty(attributes.queryParams.startDateTime default vars.endDateTime)) "1999-12-29T10:00Z" else attributes.queryParams.startDateTime default vars.startDateTime]]></ee:set-variable>
+				<ee:set-variable variableName="endDateTime"><![CDATA[%dw 2.0
+output application/java
+---
+if (isEmpty(attributes.queryParams.endDateTime default vars.endDateTime)) "2999-12-29T10:00Z" else attributes.queryParams.endDateTime default vars.endDateTime]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Criteria" doc:id="59113a84-c992-43b4-8550-4fcb6793c7eb" message="Start: #[vars.startDateTime]   End:  #[vars.endDateTime]" />
+		<os:retrieve-all doc:name="Keys" doc:id="1f3703c6-7c74-4128-97f5-7a8e0c501330" objectStore="Object_store1" />
+		<ee:transform doc:name="filter-object -store-keys" doc:id="777714c7-828c-465e-be7a-c534b176fe38">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="output"><![CDATA[%dw 2.0
+output application/json
+---
+payload filterObject ($.creationTimeStamp > vars.startDateTime
+    and $.creationTimeStamp < vars.endDateTime) mapObject(val,key,idx)-> {
+	(key) :val
+	
+} ]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="aca6c255-6a70-4bd3-a5bb-9197452ec632" message='Size of Results #[sizeOf(vars."output" default [])]' />
+		<set-payload value='#[vars."output"]' doc:name="vars.output" doc:id="67defbab-adc0-4971-bb90-44a76b7f0b24" />
+	</flow>
+	<flow name="set" doc:id="3c4763dc-f89c-4292-954a-8a5d1a14cb3e" doc:description="This is not used as a URL endpoint">
+		<http:listener doc:name="Listener" doc:id="bd62ba3f-4459-4247-baa3-965e6c1b57c8" config-ref="HTTP_Listener_config" path="set" />
+		<os:store doc:name="Store" doc:id="b51ee659-45da-4538-8e96-b41f8401a596" key='#[attributes.queryParams.key default "none"]' objectStore="Object_store1" />
+		<ee:transform doc:name="Transform Message" doc:id="4c4e4cc3-c898-414f-a2b9-80b3f17f6ba5">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":"success"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="gen" doc:id="003066b5-be2a-4950-a511-46f818691152" doc:description="This is not used as a URL endpoint">
+		<http:listener doc:name="Listener" doc:id="4e2088f1-683d-47fb-9838-b84ef266474e" config-ref="HTTP_Listener_config" path="gen" />
+		<scripting:execute engine="groovy" doc:name="Execute" doc:id="d073f628-8757-4dbc-b1e2-e8b727b1e0fa">
+			<scripting:code><![CDATA[List<Integer> list = new ArrayList<Integer>();
+
+for (i = 0; i <= max; i++) {
+   list.add(i)
+}
+
+return list;
+]]></scripting:code>
+			<scripting:parameters><![CDATA[#[{ max: attributes.queryParams.size as Number}]]]></scripting:parameters>
+		</scripting:execute>
+		<foreach doc:name="For Each" doc:id="0a8e0ccc-52ca-4e3f-aa13-14729997e15b">
+			<os:store doc:name="Store" doc:id="4e61d3c8-be89-4a7c-9607-30793a339253" key="#[uuid()]" objectStore="Object_store1">
+				<os:value><![CDATA[#[{
+  "creationTimeStamp": now() as String,
+  "omsRequest": {
+    "path": "api/OmsInvoiceUpdate",
+    "payload": {
+        "OrderNumber": "grb123458396835-1",
+        "StatusCode": "DELSAP",
+        "PONumber": "1000517410",
+        "SiteCode": "Gracobaby",
+        "TimestampUTC": "2020-07-21T13:26:31.42Z",
+        "GtinsToUpdate": [
+          {
+            "ID": 104203,
+            "Quantity": "1.000"
+          },
+          {
+            "ID": 104204,
+            "Quantity": "1.000"
+          }
+        ]
+      },
+    "retryCount": 5,
+    "correlationId": uuid(),
+    "splunkInterface": "invoice-erp-to-oms"
+  }
+}]]]></os:value>
+			</os:store>
+		</foreach>
+		<logger level="INFO" doc:name="Logger" doc:id="35fbc789-1d86-40df-9990-e932ad21f04b" message="LIst Size #[sizeOf(payload)]" />
+		<ee:transform doc:name="Transform Message" doc:id="d070c123-3d28-45a7-b563-2f8613f40952">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message" : "success"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="clear" doc:id="45b0d69f-d627-4ad3-a508-2559a14f139b">
+		<http:listener doc:name="Listener" doc:id="a829cca6-621f-4ce1-baed-9e7820554b2a" config-ref="HTTP_Listener_config" path="clear" />
+		<os:clear doc:name="Clear" doc:id="b3121657-320d-4729-9cbb-9a5cf7a9ae64" objectStore="Object_store1" />
+		<ee:transform doc:name="Transform Message" doc:id="31eb0247-e795-46c3-8d37-904ff283a925">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message" : "success"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
 	</flow>
 </mule>

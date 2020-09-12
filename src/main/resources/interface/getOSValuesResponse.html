@@ -5,12 +5,31 @@
 <link rel="stylesheet" type="text/css" href="/ui/interface/gui.css" />
 <title>View ObjectStore Values POC</title>
 </head>
-<body>
+ <body>
+     <script>
+         function clicker(){
+           msg.innerHTML="Please Wait while page loads...";
+         };
+         function submitMyForm(url){
+           clicker();
+           document.forms[0].action=url;
+           document.forms[0].submit();
+         };
+      </script>
+      <form id="form" class="elegant-aero" action="/" method="post">
+		  <div class="topnav">
+		         <a href="#" onclick="submitMyForm('/ui/interface/mainMenu.html');">Home</a>
+		           <a                href="#" onclick="submitMyForm('/interface/login');">Login</a>
+		         <a                href="#" onclick="submitMyForm('/interface/logout');">Logout</a>
+		         <a   class="active"              href="#" onclick="submitMyForm('/ui/interface/getOSValuesForm.html');">ObjectStore Values</a>
+		         <div>$message$ </div>
+		  </div>
+	
 
-<form class="elegant-aero" action="/ui/interface/mainMenu.html" method="post">
-
-<H1 align="left">Deck Commerce Object Store Values
-</H1>
+<div style="padding-left:16px">
+  <h2>Deck Commerce Object Store Values</h2>
+  <p>Click on the Payload button...</p>
+</div>
 
 &nbsp;
 

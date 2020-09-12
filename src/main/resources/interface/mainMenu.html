@@ -5,33 +5,30 @@
    <body>
       <script>
          function clicker(){
-         	msg.innerHTML="Please Wait while page loads...";
-         //setTimeout("kk()",1000);
-         }
-         
-         function kk(){
-         	document.forms[0].submit();
-         	}
-         
+           msg.innerHTML="Please Wait while page loads...";
+         };
+         function submitMyForm(url){
+           clicker();
+           document.forms[0].action=url;
+           document.forms[0].submit();
+         };
       </script>
-      <form class="elegant-aero" action="/" method="post">
-         <div>
-            <H1 align="center">Sample UI Main Menu</H1>
-         </div>
-         <nav>
-            <span>&nbsp;</span> 
-            <input type="submit" class="button" value="Login" formaction="/ui/interface/getLoginForm.html"     /> 
-            <span>&nbsp;</span>
-            <input type="submit" class="button" value="Logout" formaction="/interface/logout"     />
-            <span>&nbsp;</span>
-            <input type="submit" class="button" value="About" formaction="/ui/interface/about.html"     />
-            </label> 
-            <span>&nbsp;</span>
-            <input type="submit" class="button" value="ObjectStore" formaction="/interface/getValues"     />
-         </nav>
-         <span>&nbsp;</span>
-         <div align="center" id="msg">$message$</div>
-         <input type="hidden" id="sessionId" name="sessionId" value="$sessionId$"  />
+      <form id="form" class="elegant-aero" action="/" method="post">
+		  <div class="topnav">
+		         <a class="active" href="#" onclick="submitMyForm('/ui/interface/mainMenu.html');">Home</a>
+		         <a                href="#" onclick="submitMyForm('/interface/login');">Login</a>
+		         <a                href="#" onclick="submitMyForm('/interface/logout');">Logout</a>
+		         <a                href="#" onclick="submitMyForm('/ui/interface/getOSValuesForm.html');">ObjectStore Values</a>
+		         <div>$message$ </div>
+		  </div>
+	
+		  <div style="padding-left:16px">
+		    <h2>Deck Commerce Object Store Main Menu</h2>
+		    <p>This space for rent...</p>
+		  </div>
+		  <input type="hidden" id="sessionId" name="sessionId" value="$sessionId$"  />
+		  
+		  <input type="hidden" id="msg" name="msg" value=""  />
       </form>
    </body>
 </html>
