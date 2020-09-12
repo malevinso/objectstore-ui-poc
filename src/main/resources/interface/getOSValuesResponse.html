@@ -5,7 +5,7 @@
 <link rel="stylesheet" type="text/css" href="/ui/interface/gui.css" />
 <title>View ObjectStore Values POC</title>
 </head>
- <body>
+   <body>
      <script>
          function clicker(){
            msg.innerHTML="Please Wait while page loads...";
@@ -16,7 +16,7 @@
            document.forms[0].submit();
          };
       </script>
-      <form id="form" class="elegant-aero" action="/" method="post">
+      <form id="form" class="elegant-aero" action="/ui/interface/mainMenu.html" method="post">
 		  <div class="topnav">
 		         <a href="#" onclick="submitMyForm('/ui/interface/mainMenu.html');">Home</a>
 		           <a                href="#" onclick="submitMyForm('/interface/login');">Login</a>
@@ -25,9 +25,8 @@
 		         <div>$message$ </div>
 		  </div>
 	
-
 <div style="padding-left:16px">
-  <h2>Deck Commerce Object Store Values</h2>
+  <h2>Deck Commerce Object Store Keys ($countKeys$)</h2>
   <p>Click on the Payload button...</p>
 </div>
 
@@ -39,9 +38,12 @@ $objectStoresResponse$
 
     <label>
         <span>&nbsp;</span> 
+        <input type="button" class="button" value="Back to Query" onClick="window.history.back()" />
         <input type="submit" class="button" value="Main Menu" /> 
     </label>  
 <input type="hidden" id="sessionId" name="sessionId" value="$sessionId$" />
+         <input type="hidden" id="msg" name="msg" value=""  />
+
  <script> 
    
     </script> 

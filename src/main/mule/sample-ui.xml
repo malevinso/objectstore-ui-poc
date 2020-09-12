@@ -145,6 +145,16 @@ output application/java
 </flow>
 	<flow name="logout" doc:id="b33d6d81-e293-4d9b-b53f-1878c7d02109" >
 		<http:listener doc:name="Listener" doc:id="8f84cb77-5fa9-4d03-976a-8b865778ef00" config-ref="HTTP_Listener_config" path="/interface/logout"/>
+		<ee:transform doc:name="Transform Message" doc:id="3d5e8d36-80c7-41c9-8b24-07b09225398f" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="sessionId" ><![CDATA[%dw 2.0
+output application/java
+---
+payload.sessionId]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
 		<try doc:name="Try" doc:id="06142f40-aaba-4b62-b6b8-67c0995364d9" >
 			<os:remove doc:name="Remove User" doc:id="23bb0b1b-60ce-47c5-9b1d-c44dd543925a" key="#[vars.sessionId]" objectStore="Object_store" />
 			<error-handler >
@@ -202,7 +212,7 @@ output text/plain
   <div class=\"rTableCell\">" ++ v.creationTimeStamp ++ "</div>
  <div class=\"rTableCell\">" ++ v.omsRequest.path ++ "</div>" ++
 //<div class=\"rTableCell\">" ++ write(v.omsRequest.payload,"application/json") ++ "</div>
-"<div class=\"rTableCell\"><input type=\"button\" class=\"button\" value=\"Payload\" onclick=\"window.open('/interface/getOSPayload?key=" ++ k ++ "','name','width=800,height=400')\" /> </div>" ++
+"<div class=\"rTableCell\"><input type=\"button\" class=\"button\" value=\"Payload\" onclick=\"window.open('/interface/getOSPayload?key=" ++ k ++ "','name','width=800,height=500')\" /> </div>" ++
 "<div class=\"rTableCell\">" ++ v.omsRequest.retryCount ++ "</div>
 <div class=\"rTableCell\">" ++ v.omsRequest.correlationId ++ "</div>
 <div class=\"rTableCell\">" ++ v.omsRequest.splunkInterface ++ "</div>
@@ -210,12 +220,17 @@ output text/plain
 )) reduce ((item,acc = "") -> acc ++ item)
 )  ++ 
 "</div>" ]]></ee:set-variable>
+				<ee:set-variable variableName="countKeys" ><![CDATA[%dw 2.0
+output application/java
+---
+sizeOf(payload) ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<st:parse-template doc:name="/interface/getOSValuesResponse.html" doc:id="c15acdd8-0438-477f-9648-04a288ebf9bb" config-ref="St_Config" templateFile="/interface/getOSValuesResponse.html">
 			<st:maps>
 				<st:map key="objectStoresResponse" value="#[vars.osValues]" />
 				<st:map key="sessionId" value="#[vars.sessionId]" />
+				<st:map key="countKeys" value="#[vars.countKeys default 0]" />
 			</st:maps>
 		</st:parse-template>
 		<set-payload value="#[payload]" doc:name="text/html" doc:id="83b0c423-83b8-4086-9e3b-a90e4019a5a4" mimeType="text/html" />
@@ -252,20 +267,20 @@ write(mainPayload.omsRequest.payload,"application/json")]]></ee:set-variable>
 				<ee:set-variable variableName="startDateTime"><![CDATA[%dw 2.0
 output application/java
 ---
-if (isEmpty(attributes.queryParams.startDateTime default vars.endDateTime)) "1999-12-29T10:00Z" else attributes.queryParams.startDateTime default vars.startDateTime]]></ee:set-variable>
+if (isEmpty(attributes.queryParams.startDateTime default vars.startDateTime)) "1999-12-29T10:00Z" else attributes.queryParams.startDateTime default vars.startDateTime]]></ee:set-variable>
 				<ee:set-variable variableName="endDateTime"><![CDATA[%dw 2.0
 output application/java
 ---
 if (isEmpty(attributes.queryParams.endDateTime default vars.endDateTime)) "2999-12-29T10:00Z" else attributes.queryParams.endDateTime default vars.endDateTime]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<logger level="INFO" doc:name="Criteria" doc:id="59113a84-c992-43b4-8550-4fcb6793c7eb" message="Start: #[vars.startDateTime]   End:  #[vars.endDateTime]" />
+		<logger level="DEBUG" doc:name="Criteria" doc:id="59113a84-c992-43b4-8550-4fcb6793c7eb" message="Start: #[vars.startDateTime]   End:  #[vars.endDateTime]" />
 		<os:retrieve-all doc:name="Keys" doc:id="1f3703c6-7c74-4128-97f5-7a8e0c501330" objectStore="Object_store1" />
 		<ee:transform doc:name="filter-object -store-keys" doc:id="777714c7-828c-465e-be7a-c534b176fe38">
 			<ee:message>
 			</ee:message>
 			<ee:variables>
-				<ee:set-variable variableName="output"><![CDATA[%dw 2.0
+				<ee:set-variable variableName="outputPayload" ><![CDATA[%dw 2.0
 output application/json
 ---
 payload filterObject ($.creationTimeStamp > vars.startDateTime
@@ -275,8 +290,7 @@ payload filterObject ($.creationTimeStamp > vars.startDateTime
 } ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="aca6c255-6a70-4bd3-a5bb-9197452ec632" message='Size of Results #[sizeOf(vars."output" default [])]' />
-		<set-payload value='#[vars."output"]' doc:name="vars.output" doc:id="67defbab-adc0-4971-bb90-44a76b7f0b24" />
+		<set-payload value='#[vars.outputPayload]' doc:name="vars.output" doc:id="67defbab-adc0-4971-bb90-44a76b7f0b24" />
 	</flow>
 	<flow name="set" doc:id="3c4763dc-f89c-4292-954a-8a5d1a14cb3e" doc:description="This is not used as a URL endpoint">
 		<http:listener doc:name="Listener" doc:id="bd62ba3f-4459-4247-baa3-965e6c1b57c8" config-ref="HTTP_Listener_config" path="set" />
