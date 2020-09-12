@@ -186,12 +186,12 @@ h3 {
 
 /* Elegant Aero */
 .elegant-aero {
-	margin-left:auto;
+	margin-left:10%;
 	margin-right:auto;
 
-    max-width: 500px;
+    max-width: 1000px;
     background: #D2E9FF;
-    padding: 20px 20px 20px 20px;
+    padding: 10px 10px 10px 10px;
     font: 12px Arial, Helvetica, sans-serif;
     color: #666;
 }
@@ -240,7 +240,7 @@ h3 {
 	margin: 2px 6px 16px 0px;
 }
 .elegant-aero textarea{
-    height:100px;
+    height:200px;
 	padding: 5px 0px 0px 5px;
 	width: 70%;
 }

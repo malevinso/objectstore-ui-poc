@@ -10,6 +10,7 @@ function closeWin() {
 }
 </script>
 </head>
+
 <body>
 
 <form class="elegant-aero">
@@ -18,16 +19,28 @@ function closeWin() {
 
 &nbsp;
 
-<P>$payloadResponse$</P>
+<textarea class="textarea" id="w3review" name="w3review" rows="100" cols="300">
+</textarea>
+
+<script>
+var arr = $payloadResponse$; 
+var myJSON = JSON.stringify(arr,null,4);
+  document.getElementById("w3review").innerHTML = myJSON;
+</script>
 
 &nbsp;
 
 
 
+<nav>
+  <input type="button" class="button" value="Close" onClick="window.close()" />
+  </nav>
+
+        
 <input type="hidden" id="sessionId" name="sessionId" value="$sessionId$" />
- <script> 
-   
-    </script> 
+
+
+  
 </form>
 </body>
 </html>
