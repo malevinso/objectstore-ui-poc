@@ -1,0 +1,38 @@
+<html>
+   <head>
+      <link rel="stylesheet" type="text/css" href="/ui/interface/gui.css" />
+   </head>
+   <body>
+      <script>
+         function clicker(){
+         	msg.innerHTML="Please Wait while page loads...";
+         //setTimeout("kk()",1000);
+         }
+         
+         function kk(){
+         	document.forms[0].submit();
+         	}
+      </script>
+      <form class="elegant-aero" action="/interface/getReceipts" method="post">
+         <H1 align="center">Receipt Download
+         </H1>
+         <label>
+            <span>Project:</span>
+            <select  name="project">
+               <option value="24427905">STCU</option>
+               <option value="23712635">Stockholm Bank</option>
+            </select>
+         </label>
+         <label>
+         <span>Period (yyyy-mm):</span>
+         <input type="text"  value="2019-04" name="period">
+         </label>
+         <label>
+         <span>&nbsp;</span> 
+         <input type="submit" onClick="clicker()" class="button" value="Get Receipts" /> 
+         <input type="button" class="button" onclick="window.history.back();" value="Main Menu">
+         </label>  
+         <input type="hidden" id="sessionId" name="sessionId" value="$sessionId$" />
+      </form>
+   </body>
+</html>

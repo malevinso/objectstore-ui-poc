@@ -1,0 +1,231 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="expense-results" format="json">
+      <types:shape format="weave" example="expenses-example.json"><![CDATA[%dw 2.0
+type expense_results = {|
+  count: Number {"typeId": "int"}, 
+  results: Array<{|
+    key: String, 
+    id: String
+  |}>, 
+  expenses: {|
+    "1005129995": {|
+      date: String, 
+      notes: String, 
+      category: String, 
+      amount_in_cents: Number {"typeId": "int"}, 
+      currency: String, 
+      currency_symbol: String, 
+      currency_base_unit: Number {"typeId": "int"}, 
+      user_can_edit: Boolean, 
+      is_invoiced: Boolean, 
+      is_billable: Boolean, 
+      taxable: Null, 
+      reimbursable: Boolean, 
+      created_at: String, 
+      updated_at: String, 
+      story_id: String, 
+      workspace_id: String, 
+      user_id: String, 
+      receipt_id: String, 
+      active_submission_id: Null, 
+      expense_category_id: String, 
+      id: String
+    |}, 
+    "1005133445": {|
+      date: String, 
+      notes: String, 
+      category: String, 
+      amount_in_cents: Number {"typeId": "int"}, 
+      currency: String, 
+      currency_symbol: String, 
+      currency_base_unit: Number {"typeId": "int"}, 
+      user_can_edit: Boolean, 
+      is_invoiced: Boolean, 
+      is_billable: Boolean, 
+      taxable: Null, 
+      reimbursable: Boolean, 
+      created_at: String, 
+      updated_at: String, 
+      story_id: String, 
+      workspace_id: String, 
+      user_id: String, 
+      receipt_id: String, 
+      active_submission_id: Null, 
+      expense_category_id: String, 
+      id: String
+    |}, 
+    "1005231875": {|
+      date: String, 
+      notes: String, 
+      category: String, 
+      amount_in_cents: Number {"typeId": "int"}, 
+      currency: String, 
+      currency_symbol: String, 
+      currency_base_unit: Number {"typeId": "int"}, 
+      user_can_edit: Boolean, 
+      is_invoiced: Boolean, 
+      is_billable: Boolean, 
+      taxable: Null, 
+      reimbursable: Boolean, 
+      created_at: String, 
+      updated_at: String, 
+      story_id: String, 
+      workspace_id: String, 
+      user_id: String, 
+      receipt_id: String, 
+      active_submission_id: Null, 
+      expense_category_id: String, 
+      id: String
+    |}, 
+    "1005602305": {|
+      date: String, 
+      notes: String, 
+      category: String, 
+      amount_in_cents: Number {"typeId": "int"}, 
+      currency: String, 
+      currency_symbol: String, 
+      currency_base_unit: Number {"typeId": "int"}, 
+      user_can_edit: Boolean, 
+      is_invoiced: Boolean, 
+      is_billable: Boolean, 
+      taxable: Null, 
+      reimbursable: Boolean, 
+      created_at: String, 
+      updated_at: String, 
+      story_id: Null, 
+      workspace_id: String, 
+      user_id: String, 
+      receipt_id: String, 
+      active_submission_id: Null, 
+      expense_category_id: String, 
+      id: String
+    |}, 
+    "1006906285": {|
+      date: String, 
+      notes: String, 
+      category: String, 
+      amount_in_cents: Number {"typeId": "int"}, 
+      currency: String, 
+      currency_symbol: String, 
+      currency_base_unit: Number {"typeId": "int"}, 
+      user_can_edit: Boolean, 
+      is_invoiced: Boolean, 
+      is_billable: Boolean, 
+      taxable: Null, 
+      reimbursable: Boolean, 
+      created_at: String, 
+      updated_at: String, 
+      story_id: String, 
+      workspace_id: String, 
+      user_id: String, 
+      receipt_id: String, 
+      active_submission_id: Null, 
+      expense_category_id: String, 
+      id: String
+    |}
+  |}, 
+  meta: {|
+    count: Number {"typeId": "int"}, 
+    page_count: Number {"typeId": "int"}, 
+    page_number: Number {"typeId": "int"}, 
+    page_size: Number {"typeId": "int"}
+  |}, 
+  expense_categories: {|
+    "34826705": {|
+      name: String, 
+      deleted_at: Null, 
+      id: String
+    |}
+  |}, 
+  attachments: {|
+    "108082205": {|
+      updated_at: String, 
+      created_at: String, 
+      filename: String, 
+      deleted_at: Null, 
+      filesize: Number {"typeId": "int"}, 
+      url: String, 
+      previewable: Boolean, 
+      view_in_new_tab: Boolean, 
+      id: String
+    |}, 
+    "108082405": {|
+      updated_at: String, 
+      created_at: String, 
+      filename: String, 
+      deleted_at: Null, 
+      filesize: Number {"typeId": "int"}, 
+      url: String, 
+      previewable: Boolean, 
+      view_in_new_tab: Boolean, 
+      id: String
+    |}, 
+    "108086045": {|
+      updated_at: String, 
+      created_at: String, 
+      filename: String, 
+      deleted_at: Null, 
+      filesize: Number {"typeId": "int"}, 
+      url: String, 
+      previewable: Boolean, 
+      view_in_new_tab: Boolean, 
+      id: String
+    |}, 
+    "108100655": {|
+      updated_at: String, 
+      created_at: String, 
+      filename: String, 
+      deleted_at: Null, 
+      filesize: Number {"typeId": "int"}, 
+      url: String, 
+      previewable: Boolean, 
+      view_in_new_tab: Boolean, 
+      id: String
+    |}, 
+    "108155295": {|
+      updated_at: String, 
+      created_at: String, 
+      filename: String, 
+      deleted_at: Null, 
+      filesize: Number {"typeId": "int"}, 
+      url: String, 
+      previewable: Boolean, 
+      view_in_new_tab: Boolean, 
+      id: String
+    |}
+  |}
+|} {"MetadataFormat": "json",
+"example": "{\"count\":22,\"results\":[{\"key\":\"expenses\",\"id\":\"1006906285\"},{\"key\":\"expenses\",\"id\":\"1005602305\"},{\"key\":\"expenses\",\"id\":\"1005129995\"},{\"key\":\"expenses\",\"id\":\"1005133445\"},{\"key\":\"expenses\",\"id\":\"1005231875\"}],\"expenses\":{\"1005129995\":{\"date\":\"2019-04-12\",\"notes\":\"Meal \",\"category\":\"Company\u00A0Meals\",\"amount_in_cents\":1359,\"currency\":\"USD\",\"currency_symbol\":\"$\",\"currency_base_unit\":100,\"user_can_edit\":true,\"is_invoiced\":false,\"is_billable\":true,\"taxable\":null,\"reimbursable\":true,\"created_at\":\"2019-04-12T13:36:34-07:00\",\"updated_at\":\"2019-04-12T13:36:34-07:00\",\"story_id\":\"399495825\",\"workspace_id\":\"24427905\",\"user_id\":\"10074085\",\"receipt_id\":\"108082205\",\"active_submission_id\":null,\"expense_category_id\":\"34826705\",\"id\":\"1005129995\"},\"1005133445\":{\"date\":\"2019-04-12\",\"notes\":\"Team lunch x8\",\"category\":\"Company\u00A0Meals\",\"amount_in_cents\":14621,\"currency\":\"USD\",\"currency_symbol\":\"$\",\"currency_base_unit\":100,\"user_can_edit\":true,\"is_invoiced\":false,\"is_billable\":true,\"taxable\":null,\"reimbursable\":true,\"created_at\":\"2019-04-12T13:37:31-07:00\",\"updated_at\":\"2019-04-22T13:07:32-07:00\",\"story_id\":\"399495825\",\"workspace_id\":\"24427905\",\"user_id\":\"10074085\",\"receipt_id\":\"108082405\",\"active_submission_id\":null,\"expense_category_id\":\"34826705\",\"id\":\"1005133445\"},\"1005231875\":{\"date\":\"2019-04-12\",\"notes\":\"\",\"category\":\"Airfare\",\"amount_in_cents\":38510,\"currency\":\"USD\",\"currency_symbol\":\"$\",\"currency_base_unit\":100,\"user_can_edit\":true,\"is_invoiced\":false,\"is_billable\":true,\"taxable\":null,\"reimbursable\":true,\"created_at\":\"2019-04-12T14:09:23-07:00\",\"updated_at\":\"2019-04-12T14:09:23-07:00\",\"story_id\":\"399495805\",\"workspace_id\":\"24427905\",\"user_id\":\"11529285\",\"receipt_id\":\"108086045\",\"active_submission_id\":null,\"expense_category_id\":\"34826705\",\"id\":\"1005231875\"},\"1005602305\":{\"date\":\"2019-04-13\",\"notes\":\"4\/29 airfare plus insurance\",\"category\":\"Airfare\",\"amount_in_cents\":73971,\"currency\":\"USD\",\"currency_symbol\":\"$\",\"currency_base_unit\":100,\"user_can_edit\":true,\"is_invoiced\":false,\"is_billable\":true,\"taxable\":null,\"reimbursable\":true,\"created_at\":\"2019-04-13T09:30:15-07:00\",\"updated_at\":\"2019-04-13T09:30:15-07:00\",\"story_id\":null,\"workspace_id\":\"24427905\",\"user_id\":\"10074085\",\"receipt_id\":\"108100655\",\"active_submission_id\":null,\"expense_category_id\":\"34826705\",\"id\":\"1005602305\"},\"1006906285\":{\"date\":\"2019-04-15\",\"notes\":\"\",\"category\":\"Transportation\",\"amount_in_cents\":2716,\"currency\":\"USD\",\"currency_symbol\":\"$\",\"currency_base_unit\":100,\"user_can_edit\":true,\"is_invoiced\":false,\"is_billable\":true,\"taxable\":null,\"reimbursable\":true,\"created_at\":\"2019-04-15T10:50:35-07:00\",\"updated_at\":\"2019-04-15T10:50:35-07:00\",\"story_id\":\"399495805\",\"workspace_id\":\"24427905\",\"user_id\":\"11529285\",\"receipt_id\":\"108155295\",\"active_submission_id\":null,\"expense_category_id\":\"34826705\",\"id\":\"1006906285\"}},\"meta\":{\"count\":22,\"page_count\":5,\"page_number\":1,\"page_size\":5},\"expense_categories\":{\"34826705\":{\"name\":\"Other\",\"deleted_at\":null,\"id\":\"34826705\"}},\"attachments\":{\"108082205\":{\"updated_at\":\"2019-04-12T13:36:34-07:00\",\"created_at\":\"2019-04-12T13:35:41-07:00\",\"filename\":\"image.jpg\",\"deleted_at\":null,\"filesize\":3282977,\"url\":\"https:\/\/app.mavenlink.com\/attachments\/108082205\",\"previewable\":true,\"view_in_new_tab\":false,\"id\":\"108082205\"},\"108082405\":{\"updated_at\":\"2019-04-12T13:37:31-07:00\",\"created_at\":\"2019-04-12T13:37:27-07:00\",\"filename\":\"image.jpg\",\"deleted_at\":null,\"filesize\":3340734,\"url\":\"https:\/\/app.mavenlink.com\/attachments\/108082405\",\"previewable\":true,\"view_in_new_tab\":false,\"id\":\"108082405\"},\"108086045\":{\"updated_at\":\"2019-04-12T14:09:23-07:00\",\"created_at\":\"2019-04-12T14:09:08-07:00\",\"filename\":\"alaska.pdf\",\"deleted_at\":null,\"filesize\":612213,\"url\":\"https:\/\/app.mavenlink.com\/attachments\/108086045\",\"previewable\":false,\"view_in_new_tab\":true,\"id\":\"108086045\"},\"108100655\":{\"updated_at\":\"2019-04-13T09:30:15-07:00\",\"created_at\":\"2019-04-13T09:29:51-07:00\",\"filename\":\"Confirmation _ Delta Air Lines.pdf\",\"deleted_at\":null,\"filesize\":1192223,\"url\":\"https:\/\/app.mavenlink.com\/attachments\/108100655\",\"previewable\":false,\"view_in_new_tab\":true,\"id\":\"108100655\"},\"108155295\":{\"updated_at\":\"2019-04-15T10:50:35-07:00\",\"created_at\":\"2019-04-15T10:50:31-07:00\",\"filename\":\"uber-thursday.pdf\",\"deleted_at\":null,\"filesize\":210642,\"url\":\"https:\/\/app.mavenlink.com\/attachments\/108155295\",\"previewable\":false,\"view_in_new_tab\":true,\"id\":\"108155295\"}}}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="attachment-list" format="java">
+      <types:shape format="java" element="java.util.Map"/>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#28037e06-4928-4c6a-bb48-9004c66e9778">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="expense-results"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#72b067b8-27cd-40d7-bcaa-8843035c42c7">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="expense-results"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#3e066de4-9b55-4965-9ecb-8d5de14774df"/>
+  <types:enrichment select="#ce9af352-13e4-4a5b-8edd-95b0c0932178"/>
+  <types:enrichment select="#4f9845c8-0ade-4ca0-910a-96606540661f"/>
+  <types:enrichment select="#671e2902-ebf0-409f-b03b-70fb80679b0e"/>
+  <types:enrichment select="#3836103e-1bce-4361-ba8c-4557c20eb2f5"/>
+</types:mule>
