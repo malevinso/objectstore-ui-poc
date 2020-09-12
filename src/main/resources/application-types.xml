@@ -225,7 +225,6 @@ type expense_results = {|
   </types:enrichment>
   <types:enrichment select="#3e066de4-9b55-4965-9ecb-8d5de14774df"/>
   <types:enrichment select="#ce9af352-13e4-4a5b-8edd-95b0c0932178"/>
-  <types:enrichment select="#4f9845c8-0ade-4ca0-910a-96606540661f"/>
   <types:enrichment select="#671e2902-ebf0-409f-b03b-70fb80679b0e"/>
   <types:enrichment select="#3836103e-1bce-4361-ba8c-4557c20eb2f5"/>
   <types:enrichment select="#ca20c469-65bd-45f1-8173-e4e321682025"/>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:st="http://www.mulesoft.org/schema/mule/st" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/st http://www.mulesoft.org/schema/mule/st/current/mule-st.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="a99c690a-1322-4708-a31e-2fcf03d4e325" >
+		<http:listener-connection host="0.0.0.0" port="${https.path}" />
+	</http:listener-config>
+	<st:config name="St_Config" doc:name="St Config" doc:id="90550cd2-beda-4609-be03-0502a7ea72fd" />
+	<os:object-store name="Object_store_Session" doc:name="Object store" doc:id="5da109e3-e7ef-4af6-ac3b-922ab84c5396" maxEntries="500" entryTtl="15" entryTtlUnit="MINUTES" />
+	<os:object-store name="Object_store_DeckCommerce" doc:name="Object store" doc:id="14ea1a84-6f29-49af-bd7a-eed912364646" maxEntries="100000" entryTtlUnit="MINUTES"/>
+	 
+</mule>

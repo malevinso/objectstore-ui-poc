@@ -1,10 +1,37 @@
 https:
   port: "8082"
+  base:
+    path: ""
 
-listener:
-  path: 
-    generic: "/ui/interface/*"
-    login:   "/interface/login"
-    login-response:  "/interface/getLoginResponse"
-    get-values:  "/interface/getValues"
-    get-os-payload: "/interface/getOSPayload"
+interface:
+  userName: "andre"
+  passWord: "bandre"
+
+  session:
+    ttlMinutes: "15"
+    ttlInterval: "1"
+    maxEntries: "500"
+
+  listener:
+    path: 
+      generic: "/ui/interface/*"
+      login:   "/interface/login"
+      login-response:  "/interface/getLoginResponse"
+      logout: "/interface/logout"
+      get-values:  "/interface/getValues"
+      get-os-payload: "/interface/getOSPayload"
+      
+api:
+  listener:
+    path:
+      get-os-values: "/api/getOSValues"
+      set-os-values: "/api/setOSValue"
+      gen-os-values: "/api/genOSValues"
+      clear-os-values: "/api/clearOSValues"
+      
+deckCommerce:
+  objectStore:
+    maxEntries:  "100000"
+    ttlMinutes:  ""
+    
+      

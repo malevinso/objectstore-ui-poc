@@ -10,15 +10,10 @@ http://www.mulesoft.org/schema/mule/st http://www.mulesoft.org/schema/mule/st/cu
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
 http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
 http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
-	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="a99c690a-1322-4708-a31e-2fcf03d4e325" >
-		<http:listener-connection host="0.0.0.0" port="8081" />
-	</http:listener-config>
-	<st:config name="St_Config" doc:name="St Config" doc:id="90550cd2-beda-4609-be03-0502a7ea72fd" />
-	<os:object-store name="Object_store" doc:name="Object store" doc:id="5da109e3-e7ef-4af6-ac3b-922ab84c5396" maxEntries="55" entryTtl="15" entryTtlUnit="MINUTES" />
-	<os:object-store name="Object_store1" doc:name="Object store" doc:id="14ea1a84-6f29-49af-bd7a-eed912364646" maxEntries="5000" entryTtl="5000" entryTtlUnit="MINUTES" expirationInterval="15" />
+	
 	<flow name="generic-html" doc:id="e61286ae-aa84-42c2-a14f-c7c4e0c367f4">
 		<http:listener doc:name="/ui/interface/*" doc:id="6a08f0c2-4074-41d4-ae45-705508208f2a" config-ref="HTTP_Listener_config" path="/ui/interface/*" />
-		<ee:transform doc:name="set-session-id" doc:id="c1a80906-a78f-4301-beb6-af4ad895a5d5">
+		<ee:transform doc:name="set-vars" doc:id="c1a80906-a78f-4301-beb6-af4ad895a5d5">
 					<ee:message>
 					</ee:message>
 					<ee:variables>
@@ -26,22 +21,16 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 output application/java
 ---
 if (!isEmpty(payload)) (if (!isEmpty(payload.sessionId)) payload.sessionId else "none") else "none"]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-		<ee:transform doc:name="set-file-to-load" doc:id="4f9845c8-0ade-4ca0-910a-96606540661f">
-			<ee:message>
-			</ee:message>
-			<ee:variables>
-				<ee:set-variable variableName="fileToLoad" ><![CDATA[output application/java
+				<ee:set-variable variableName="fileToLoad" ><![CDATA[%dw 2.0
+output application/java
 ---
 attributes.requestUri[3 to sizeOf(attributes.requestUri)-1]]]></ee:set-variable>
-			
-</ee:variables>
-		</ee:transform>
-		<logger level="INFO" doc:name="Log fileToLoad" doc:id="2287a295-8c65-46a5-a029-70bd83d9dfc0" message="Trying to read this ui file: #[vars.fileToLoad]"/>
+					</ee:variables>
+				</ee:transform>
+		<logger level="INFO" doc:name="Log fileToLoad" doc:id="2287a295-8c65-46a5-a029-70bd83d9dfc0" message="Interface - reading this file: #[vars.fileToLoad]"/>
 		<choice doc:name="Resource Type?" doc:id="75f14485-279e-46ea-a307-0a646318d013" doc:description='Used to determine which  type of "resource" this is,  options are "html", "css" and "other" e.g., Images etc.'>
-			<when expression='#[/* HTML */ vars.fileToLoad contains "html"]'>
-				<os:retrieve doc:name="UserName" doc:id="fe9a4b5d-9473-4caa-a101-efb048dede15" key='#[vars.sessionId default "none"]' objectStore="Object_store" target="user">
+			<when expression='#[/* HTML */                   vars.fileToLoad contains "html"]'>
+				<os:retrieve doc:name="UserName" doc:id="fe9a4b5d-9473-4caa-a101-efb048dede15" key='#[vars.sessionId default "none"]' objectStore="Object_store_Session" target="user">
 			<os:default-value><![CDATA[none]]></os:default-value>
 		</os:retrieve>
 				<st:parse-template doc:name="vars.fileToLoad" doc:id="8973c8d0-8e3a-4ec2-86d1-eb6161fd76be" templateFile='#[vars.fileToLoad]' config-ref="St_Config" outputMimeType="text/html">
@@ -53,7 +42,7 @@ attributes.requestUri[3 to sizeOf(attributes.requestUri)-1]]]></ee:set-variable>
 		</st:parse-template>
 				<set-payload value="#[payload]" doc:name="text/html" doc:id="60e851fc-abf9-4837-a511-af0908ef53c0" mimeType="text/html"/>
 			</when>
-			<when expression='#[/* CSS */ vars.fileToLoad contains "css"]'>
+			<when expression='#[/* CSS */                     vars.fileToLoad contains "css"]'>
 				<file:read doc:name="CSS" doc:id="1407219f-cb86-489c-8391-921df997a688" path='#["${app.home}" ++ vars.fileToLoad]' />
 				<set-payload value="#[payload]" doc:name="text/css" doc:id="3e339801-a274-48a5-949a-7f6b9620eca6" mimeType="text/css" />
 			</when>
@@ -105,10 +94,10 @@ payload.password default "not entered"]]></ee:set-variable>
 </ee:variables>
 		</ee:transform>
 		<validation:is-true doc:name="Is true" doc:id="9348aa0f-eb0c-48ee-a5de-fa1dbb0608df" expression='#[upper(vars.user) == "ANDRE" and upper(vars.pass) == "BANDRE"  ]' message="Invalid Username or Password - try Again"/>
-		<os:store doc:name="save-user-name" doc:id="dd7e5e19-41ba-441a-8ab4-637b84319a07" key="#[vars.sessionId]" failOnNullValue="false" objectStore="Object_store">
+		<os:store doc:name="save-user-name" doc:id="dd7e5e19-41ba-441a-8ab4-637b84319a07" key="#[vars.sessionId]" failOnNullValue="false" objectStore="Object_store_Session">
 			<os:value ><![CDATA[#[vars.user]]]></os:value>
 		</os:store>
-		<ee:transform doc:name="Transform Message" doc:id="58b701ea-e587-485d-b9a9-8adcdf06e9c8" >
+		<ee:transform doc:name="get-session-id" doc:id="58b701ea-e587-485d-b9a9-8adcdf06e9c8" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/x-www-form-urlencoded
@@ -156,7 +145,7 @@ payload.sessionId]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<try doc:name="Try" doc:id="06142f40-aaba-4b62-b6b8-67c0995364d9" >
-			<os:remove doc:name="Remove User" doc:id="23bb0b1b-60ce-47c5-9b1d-c44dd543925a" key="#[vars.sessionId]" objectStore="Object_store" />
+			<os:remove doc:name="Remove User" doc:id="23bb0b1b-60ce-47c5-9b1d-c44dd543925a" key="#[vars.sessionId]" objectStore="Object_store_Session" />
 			<error-handler >
 				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="3f4f37d8-26d9-49ee-823e-640ca9172b37" />
 			</error-handler>
@@ -186,7 +175,7 @@ output application/java
 payload.EndDateTime]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<os:retrieve doc:name="userName" doc:id="b91b4ba8-67d8-4992-8a35-68db9f30b5d5" key="#[vars.sessionId]" objectStore="Object_store" target="user">
+		<os:retrieve doc:name="userName" doc:id="b91b4ba8-67d8-4992-8a35-68db9f30b5d5" key="#[vars.sessionId]" objectStore="Object_store_Session" target="user">
 			<os:default-value><![CDATA[none]]></os:default-value>
 		</os:retrieve>
 		<flow-ref doc:name="get-os-value" doc:id="050d8da1-cc8a-453c-be28-a0d7c9a64bd0" name="getOSValues" />
@@ -237,9 +226,9 @@ sizeOf(payload) ]]></ee:set-variable>
 		</st:parse-template>
 		<set-payload value="#[payload]" doc:name="text/html" doc:id="83b0c423-83b8-4086-9e3b-a90e4019a5a4" mimeType="text/html" />
 	</flow>
-	<flow name="getOSPayload" doc:id="0329c526-ab0f-45c1-b8df-1f2fcbb2a969" >
+	<flow name="interface-getOSPayload" doc:id="0329c526-ab0f-45c1-b8df-1f2fcbb2a969" >
 		<http:listener doc:name="Listener" doc:id="bb77cf80-c3a8-4c8f-abb2-803f4daa9241" config-ref="HTTP_Listener_config" path="/interface/getOSPayload"/>
-		<os:retrieve doc:name="userName" doc:id="fddf0de0-336f-4dfe-8537-96d018277ac5" key="#[attributes.queryParams.key]" objectStore="Object_store1">
+		<os:retrieve doc:name="userName" doc:id="fddf0de0-336f-4dfe-8537-96d018277ac5" key="#[attributes.queryParams.key]" objectStore="Object_store_DeckCommerce">
 			<os:default-value ><![CDATA[NONE]]></os:default-value>
 		</os:retrieve>
 		<ee:transform doc:name="stringify-json" doc:id="0398d16e-15d7-4568-bf8b-3121b01f4f4a" >
@@ -259,122 +248,5 @@ write(mainPayload.omsRequest.payload,"application/json")]]></ee:set-variable>
 			</st:maps>
 		</st:parse-template>
 		<set-payload value="#[payload]" doc:name="text/html" doc:id="ed2d675f-6f3e-4dce-b868-bb6b9e037477" mimeType="text/html" />
-	</flow>
-	<flow name="getOSValues" doc:id="2297a8d4-4060-4b28-be57-dcfea5051f2e" doc:description="This is not used directly as a URL endpoint">
-		<http:listener doc:name="api/getOSValues" doc:id="63099a90-499c-4375-aa5d-9fefd105b658" config-ref="HTTP_Listener_config" path="api/getOSValues" />
-		<ee:transform doc:name="set-vars" doc:id="f273767f-7032-45c0-9ffc-7fb9f11c049c">
-			<ee:message>
-			</ee:message>
-			<ee:variables>
-				<ee:set-variable variableName="startDateTime"><![CDATA[%dw 2.0
-output application/java
----
-if (isEmpty(attributes.queryParams.startDateTime default vars.startDateTime)) "1999-12-29T10:00Z" else attributes.queryParams.startDateTime default vars.startDateTime]]></ee:set-variable>
-				<ee:set-variable variableName="endDateTime"><![CDATA[%dw 2.0
-output application/java
----
-if (isEmpty(attributes.queryParams.endDateTime default vars.endDateTime)) "2999-12-29T10:00Z" else attributes.queryParams.endDateTime default vars.endDateTime]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<logger level="DEBUG" doc:name="Criteria" doc:id="59113a84-c992-43b4-8550-4fcb6793c7eb" message="Start: #[vars.startDateTime]   End:  #[vars.endDateTime]" />
-		<os:retrieve-all doc:name="Keys" doc:id="1f3703c6-7c74-4128-97f5-7a8e0c501330" objectStore="Object_store1" />
-		<ee:transform doc:name="filter-object -store-keys" doc:id="777714c7-828c-465e-be7a-c534b176fe38">
-			<ee:message>
-			</ee:message>
-			<ee:variables>
-				<ee:set-variable variableName="outputPayload" ><![CDATA[%dw 2.0
-output application/json
----
-payload filterObject ($.creationTimeStamp > vars.startDateTime
-    and $.creationTimeStamp < vars.endDateTime) mapObject(val,key,idx)-> {
-	(key) :val
-	
-} ]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<set-payload value='#[vars.outputPayload]' doc:name="vars.output" doc:id="67defbab-adc0-4971-bb90-44a76b7f0b24" />
-	</flow>
-	<flow name="set" doc:id="3c4763dc-f89c-4292-954a-8a5d1a14cb3e" doc:description="This is not used as a URL endpoint">
-		<http:listener doc:name="/api/setOSValue" doc:id="bd62ba3f-4459-4247-baa3-965e6c1b57c8" config-ref="HTTP_Listener_config" path="/api/setOSValue" />
-		<os:store doc:name="Store" doc:id="b51ee659-45da-4538-8e96-b41f8401a596" key='#[attributes.queryParams.key default "none"]' objectStore="Object_store1" />
-		<ee:transform doc:name="Transform Message" doc:id="4c4e4cc3-c898-414f-a2b9-80b3f17f6ba5">
-			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	"message":"success"
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-	</flow>
-	<flow name="gen" doc:id="003066b5-be2a-4950-a511-46f818691152" doc:description="This is not used as a URL endpoint">
-		<http:listener doc:name="/api/genOSValues" doc:id="4e2088f1-683d-47fb-9838-b84ef266474e" config-ref="HTTP_Listener_config" path="/api/genOSValues" />
-		<scripting:execute engine="groovy" doc:name="Execute" doc:id="d073f628-8757-4dbc-b1e2-e8b727b1e0fa">
-			<scripting:code><![CDATA[List<Integer> list = new ArrayList<Integer>();
-
-for (i = 0; i <= max; i++) {
-   list.add(i)
-}
-
-return list;
-]]></scripting:code>
-			<scripting:parameters><![CDATA[#[{ max: attributes.queryParams.size as Number}]]]></scripting:parameters>
-		</scripting:execute>
-		<foreach doc:name="For Each" doc:id="0a8e0ccc-52ca-4e3f-aa13-14729997e15b">
-			<os:store doc:name="Store" doc:id="4e61d3c8-be89-4a7c-9607-30793a339253" key="#[uuid()]" objectStore="Object_store1">
-				<os:value><![CDATA[#[{
-  "creationTimeStamp": now() as String,
-  "omsRequest": {
-    "path": "api/OmsInvoiceUpdate",
-    "payload": {
-        "OrderNumber": "grb123458396835-1",
-        "StatusCode": "DELSAP",
-        "PONumber": "1000517410",
-        "SiteCode": "Gracobaby",
-        "TimestampUTC": "2020-07-21T13:26:31.42Z",
-        "GtinsToUpdate": [
-          {
-            "ID": 104203,
-            "Quantity": "1.000"
-          },
-          {
-            "ID": 104204,
-            "Quantity": "1.000"
-          }
-        ]
-      },
-    "retryCount": 5,
-    "correlationId": uuid(),
-    "splunkInterface": "invoice-erp-to-oms"
-  }
-}]]]></os:value>
-			</os:store>
-		</foreach>
-		<logger level="INFO" doc:name="Logger" doc:id="35fbc789-1d86-40df-9990-e932ad21f04b" message="LIst Size #[sizeOf(payload)]" />
-		<ee:transform doc:name="Transform Message" doc:id="d070c123-3d28-45a7-b563-2f8613f40952">
-			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	"message" : "success"
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-	</flow>
-	<flow name="clearOSValue" doc:id="45b0d69f-d627-4ad3-a508-2559a14f139b">
-		<http:listener doc:name="/api/clearOSValue" doc:id="a829cca6-621f-4ce1-baed-9e7820554b2a" config-ref="HTTP_Listener_config" path="/api/clearOSValue" />
-		<os:clear doc:name="Clear" doc:id="b3121657-320d-4729-9cbb-9a5cf7a9ae64" objectStore="Object_store1" />
-		<ee:transform doc:name="Transform Message" doc:id="31eb0247-e795-46c3-8d37-904ff283a925">
-			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	"message" : "success"
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
 	</flow>
 </mule>
