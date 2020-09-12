@@ -228,4 +228,5 @@ type expense_results = {|
   <types:enrichment select="#4f9845c8-0ade-4ca0-910a-96606540661f"/>
   <types:enrichment select="#671e2902-ebf0-409f-b03b-70fb80679b0e"/>
   <types:enrichment select="#3836103e-1bce-4361-ba8c-4557c20eb2f5"/>
+  <types:enrichment select="#ca20c469-65bd-45f1-8173-e4e321682025"/>
 </types:mule>

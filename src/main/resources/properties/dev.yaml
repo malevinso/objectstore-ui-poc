@@ -1,0 +1,10 @@
+https:
+  port: "8082"
+
+listener:
+  path: 
+    generic: "/ui/interface/*"
+    login:   "/interface/login"
+    login-response:  "/interface/getLoginResponse"
+    get-values:  "/interface/getValues"
+    get-os-payload: "/interface/getOSPayload"

@@ -3,11 +3,20 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="/ui/interface/gui.css" />
+<link rel="shortcut icon" href="/ui/interface/favicon.ico" type="image/x-icon">
+   <title>Object Store Payload</title>
 <title>View ObjectStore Value</title>
 <script>
 function closeWin() {
   myWindow.close();   // Closes the new window
-}
+};
+function myFunction() {
+  var copyText = document.getElementById("w3review");
+  copyText.select();
+  copyText.setSelectionRange(0, 999999)
+  document.execCommand("copy");
+  alert("Copied the text to clipboard: " + copyText.value);
+};
 </script>
 </head>
 
@@ -19,7 +28,7 @@ function closeWin() {
 
 &nbsp;
 
-<textarea class="textarea" id="w3review" name="w3review" rows="100" cols="300">
+<textarea class="textarea" id="w3review" name="w3review" rows="200" cols="300">
 </textarea>
 
 <script>
@@ -34,6 +43,8 @@ var myJSON = JSON.stringify(arr,null,4);
 
 <nav>
   <input type="button" class="button" value="Close" onClick="window.close()" />
+  <input type="button" class="button" value="Copy" onClick="myFunction()" />
+  
   </nav>
 
         
