@@ -19,7 +19,7 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 		</http:listener-connection>
 	</http:listener-config>
 	<st:config name="St_Config" doc:name="St Config" doc:id="90550cd2-beda-4609-be03-0502a7ea72fd" />
-	<os:object-store name="Object_store_Session" doc:name="Object store" doc:id="5da109e3-e7ef-4af6-ac3b-922ab84c5396" maxEntries="500" entryTtl="15" entryTtlUnit="MINUTES" />
+	<os:object-store name="Object_store_Session" doc:name="Object store" doc:id="5da109e3-e7ef-4af6-ac3b-922ab84c5396" maxEntries="1000" entryTtl="8" entryTtlUnit="HOURS" expirationIntervalUnit="HOURS"/>
 	<os:object-store name="Object_store_DeckCommerce" doc:name="Object store" doc:id="14ea1a84-6f29-49af-bd7a-eed912364646" maxEntries="100000" entryTtlUnit="MINUTES"/>
 	<configuration-properties doc:name="Configuration properties" doc:id="3fb07466-d849-4204-8b31-b8d7520752f6" file="properties/${mule.env}.yaml" />
 	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="2f2e2dba-c50f-4c65-af80-ec81aa2ae2a9" >

@@ -20,12 +20,12 @@
 		         <a href="#" onclick="submitMyForm('/ui/interface/mainMenu.html');">Home</a>
 		           <a                href="#" onclick="submitMyForm('/interface/login');">Login</a>
 		         <a                href="#" onclick="submitMyForm('/interface/logout');">Logout</a>
-		         <a   class="active"              href="#" onclick="submitMyForm('/interface/getOSValuesForm');">ObjectStore Values</a>
+		         <a   class="active"              href="#" onclick="clicker();submitMyForm('/interface/getOSValuesForm');">ObjectStore Values</a>
 		     		         <span>
              <TABLE class="rTable">
-              <TR  class="rTableRow"><TD class="rTableCells">User:</TD>
+             <TR  class="rTableRow"><TH class="rTableCells">User:</TH>
               <TD class="rTableCells">$user$</TD></TR>
-              <TR class="rTableRow"><TD class="rTableCells">Env:</TD>
+              <TR class="rTableRow"><TH class="rTableCells">Env:</TH>
               <TD class="rTableCells">$env$</TD>
               </TR>
              </TABLE></span>
@@ -56,10 +56,11 @@
          <span>&nbsp;</span> 
          <input type="button" onclick="submitMyForm('/interface/getValues');" class="button" value="Submit" /> 
          <input type="button" class="button" onclick="submitMyForm('/ui/interface/mainMenu.html');" value="Main Menu">
+         <div id="msg">&nbsp;</div>
          </label>  
          <input type="hidden" id="sessionId" name="sessionId" value="$sessionId$" />
-         <span id="msg">&nbsp;</span> 
-         <input type="hidden" id="msg" name="msg" value=""  />
+ 
+
       </form>
    </body>
 </html>

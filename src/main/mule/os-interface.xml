@@ -80,17 +80,32 @@ if (!isEmpty(payload)) (if (!isEmpty(payload.sessionId)) payload.sessionId else 
 		<os:retrieve doc:name="userName" doc:id="1b7374fc-3e13-4e21-ba17-406300c3a69f" key='#[vars.sessionId default "none"]' objectStore="Object_store_Session" target="user">
 			<os:default-value><![CDATA[none]]></os:default-value>
 		</os:retrieve>
+		<validation:is-true doc:name="Is true" doc:id="0e3a6f43-82c5-4809-9ee8-e2c163e930e2" expression='#[upper(vars.user) == "ANDRE" ]' message="Not logged in - please login."/>
 		<logger level="INFO" doc:name="Logger" doc:id="0917ef5d-5982-4de3-883d-b94d92370f41" message="logger Dates: #[payload.StartDateTime]   #[payload.EndDateTime]"/>
 		<st:parse-template doc:name="Parse template" doc:id="5e645b67-769f-4634-91e7-1361a4f61394" config-ref="St_Config" templateFile="/interface/getOSValuesForm.html" >
 			<st:maps >
-				<st:map key="startDateTime" value="#[payload.StartDateTime default  (now() &gt;&gt; &quot;America/New_York&quot;) as String {format : &quot;yyyy-MM-dd'T'HH:mm&quot;} ]" />
-				<st:map key="endDateTime" value="#[payload.EndDateTime default  (now() &gt;&gt; &quot;America/New_York&quot;) as String {format : &quot;yyyy-MM-dd'T'HH:mm&quot;}]" />
+				<st:map key="startDateTime" value="#[payload.StartDateTime default  (&quot;2020-08-01T10:00&quot; &gt;&gt; &quot;America/New_York&quot;) as String {format : &quot;yyyy-MM-dd'T'HH:mm&quot;} ]" />
+				<st:map key="endDateTime" value="#[payload.EndDateTime default  (&quot;2020-08-31T10:00&quot; &gt;&gt; &quot;America/New_York&quot;) as String {format : &quot;yyyy-MM-dd'T'HH:mm&quot;}]" />
 				<st:map key="user" value='#[vars.user default "none"]' />
 				<st:map key="sessionId" value='#[vars.sessionId default "none"]' />
 				<st:map key="env" value='${mule.env}' />
 			</st:maps>
 		</st:parse-template>
 		<set-payload value="#[payload]" doc:name="Copy_of_text/html" doc:id="9d41b7ad-0dfe-4889-8676-13645b2254f8" mimeType="text/html" />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="Copy_of_On Error Continue" doc:id="2459bb72-45de-44f5-ba84-356688f31223" >
+				<ee:transform doc:name="Copy_of_Transform Message" doc:id="fd94a1bc-2654-4691-9fb0-489532c38724" >
+					<ee:message />
+					<ee:variables >
+						<ee:set-variable variableName="message" ><![CDATA[%dw 2.0
+output application/java
+---
+"Invalid user or password"]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<flow-ref doc:name="Copy_of_loginForm" doc:id="633755ba-2982-44fb-a323-3969f2d0a6b2" name="loginForm" />
+			</on-error-continue>
+		</error-handler>
 	</flow>
 	<flow name="getLoginResponse" doc:id="e20ab8e1-7ace-4fc1-9e15-cbc052e21837" >
 		<http:listener doc:name="/interface/loginResponse" doc:id="f482d666-b54e-4c26-af67-fae242a2760a" config-ref="HTTP_Listener_config" path="/interface/loginResponse"/>
