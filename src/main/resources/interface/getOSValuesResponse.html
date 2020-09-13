@@ -22,7 +22,8 @@
 		         <a href="#" onclick="submitMyForm('/ui/interface/mainMenu.html');">Home</a>
 		           <a                href="#" onclick="submitMyForm('/interface/login');">Login</a>
 		         <a                href="#" onclick="submitMyForm('/interface/logout');">Logout</a>
-		         <a   class="active"              href="#" onclick="submitMyForm('/ui/interface/getOSValuesForm.html');">ObjectStore Values</a>
+		         <a   class="active"              href="#" onclick="submitMyForm('/interface/getOSValuesForm');">ObjectStore Values</a>
+		         <a                href="#" onclick="window.scrollTo(0,document.body.scrollHeight);">Scroll To Bottom</a>
 		         <div>$message$ </div>
 		  </div>
 	
@@ -39,11 +40,15 @@ $objectStoresResponse$
 
     <label>
         <span>&nbsp;</span> 
-        <input type="button" class="button" value="Back to Query" onClick="window.history.back()" />
+        <input type="button" class="button" value="Back to Query" onclick="submitMyForm('/interface/getOSValuesForm');" />
         <input type="submit" class="button" value="Main Menu" /> 
     </label>  
 <input type="hidden" id="sessionId" name="sessionId" value="$sessionId$" />
          <input type="hidden" id="msg" name="msg" value=""  />
+
+        <input type="hidden" id="startDateTime" name="StartDateTime" value="$startDateTime$"  />
+        <input type="hidden" id="endDateTime" name="EndDateTime" value="$endDateTime$"  />
+        
 
  <script> 
    

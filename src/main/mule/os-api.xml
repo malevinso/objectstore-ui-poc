@@ -61,21 +61,49 @@ output application/json
 	</flow>
 	<flow name="genOSValues" doc:id="003066b5-be2a-4950-a511-46f818691152" doc:description="This is not used as a URL endpoint">
 		<http:listener doc:name="api/genOSValues" doc:id="4e2088f1-683d-47fb-9838-b84ef266474e" config-ref="HTTP_Listener_config" path="/api/genOSValues" />
+		<ee:transform doc:name="Transform Message" doc:id="da0fb4ba-ce2b-4096-9706-6659c3da825b" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="timeStamp" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.queryParams.timeStamp default now()]]></ee:set-variable>
+				<ee:set-variable variableName="size" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.queryParams.size]]></ee:set-variable>
+				<ee:set-variable variableName="interval" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.queryParams.interval]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
 		<scripting:execute engine="groovy" doc:name="Execute" doc:id="d073f628-8757-4dbc-b1e2-e8b727b1e0fa">
 			<scripting:code><![CDATA[List<Integer> list = new ArrayList<Integer>();
 
-for (i = 0; i <= max; i++) {
+for (i = 0; i < max; i++) {
    list.add(i)
 }
 
 return list;
 ]]></scripting:code>
-			<scripting:parameters><![CDATA[#[{ max: attributes.queryParams.size as Number}]]]></scripting:parameters>
+			<scripting:parameters><![CDATA[#[{ max: vars.size as Number}]]]></scripting:parameters>
 		</scripting:execute>
 		<foreach doc:name="For Each" doc:id="0a8e0ccc-52ca-4e3f-aa13-14729997e15b">
+			<ee:transform doc:name="Transform Message" doc:id="04c4ed49-c8c0-4996-8982-002c5cfdf546" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+import * from dw::Runtime
+---
+"waiting is the hardest part" : wait  (String, vars.interval default 0)
+]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
 			<os:store doc:name="Store" doc:id="4e61d3c8-be89-4a7c-9607-30793a339253" key="#[uuid()]" objectStore="Object_store_DeckCommerce">
 				<os:value><![CDATA[#[{
-  "creationTimeStamp": now() as String,
+  "creationTimeStamp": vars.timeStamp,
   "omsRequest": {
     "path": "api/OmsInvoiceUpdate",
     "payload": {

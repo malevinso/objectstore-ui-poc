@@ -1,24 +1,35 @@
 https:
   port: "8082"
+  host: "localhost"
+  keystore: 
+    path: "keystores/keystore.jks"
+    type:  "JKS"
+    password: "password"
   base:
     path: ""
 
 interface:
   userName: "andre"
   passWord: "bandre"
+  html:
+    path: 
+      login-form:  "/interface/getLoginForm.html"
+      values-form: "/interface/getOSValuesForm.html"
+      values-response: "/interface/getOSValuesResponse.html"
+      payload-response: "/interface/getOSPayloadResponse.html"
 
   session:
     ttlMinutes: "15"
     ttlInterval: "1"
     maxEntries: "500"
-
-  listener:
+    
     path: 
       generic: "/ui/interface/*"
-      login:   "/interface/login"
+      login-form:   "/interface/login"
       login-response:  "/interface/getLoginResponse"
       logout: "/interface/logout"
-      get-values:  "/interface/getValues"
+      get-values-form: "/interface/getOSValuesForm"
+      get-values-response:  "/interface/getValues"
       get-os-payload: "/interface/getOSPayload"
       
 api:

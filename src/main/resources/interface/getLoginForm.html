@@ -16,12 +16,12 @@
            document.forms[0].submit();
          };
       </script>
-      <form id="form" class="elegant-aero" action="/interface/getLoginResponse" method="post">
+      <form id="form" class="elegant-aero" action="/interface/loginResponse" method="post">
 		  <div class="topnav">
 		         <a href="#" onclick="submitMyForm('/ui/interface/mainMenu.html');">Home</a>
 		           <a   class="active"             href="#" onclick="submitMyForm('/interface/login');">Login</a>
 		         <a                href="#" onclick="submitMyForm('/interface/logout');">Logout</a>
-		         <a                href="#" onclick="submitMyForm('/ui/interface/getOSValuesForm.html');">ObjectStore Values</a>
+		         <a                href="#" onclick="submitMyForm('/interface/getOSValuesForm');">ObjectStore Values</a>
 		         <div>$message$ </div>
 		  </div>
 	
@@ -47,8 +47,8 @@
       
       <label>
         <span>&nbsp;</span> 
-        <input type="submit" class="button" value="Login" /> 
-        <input type="submit" class="button" formaction="/ui/interface/mainMenu.html" value="Main Menu">
+        <input type="submit" class="button" onclick="submitMyForm('/interface/loginResponse');"   value="Login" /> 
+        <input type="submit" class="button" onclick="submitMyForm('/ui/interface/mainMenu.html');" value="Main Menu">
       </label>  
     </div>
         <input type="hidden" id="msg" name="msg" value=""  />

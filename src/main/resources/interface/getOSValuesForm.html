@@ -20,7 +20,7 @@
 		         <a href="#" onclick="submitMyForm('/ui/interface/mainMenu.html');">Home</a>
 		           <a                href="#" onclick="submitMyForm('/interface/login');">Login</a>
 		         <a                href="#" onclick="submitMyForm('/interface/logout');">Logout</a>
-		         <a   class="active"              href="#" onclick="submitMyForm('/ui/interface/getOSValuesForm.html');">ObjectStore Values</a>
+		         <a   class="active"              href="#" onclick="submitMyForm('/interface/getOSValuesForm');">ObjectStore Values</a>
 		         <div>$message$ </div>
 		  </div>
 	
@@ -33,20 +33,22 @@
          <label>
             <span>Start Date Time</span>
 
-		  	<input class="datetime-local" type="datetime-local" id="startdatetime" name="StartDateTime">
+		  	<input class="datetime-local" type="datetime-local" id="startdatetime" name="StartDateTime"    value="$startDateTime$"
+       min="2018-01-00T00:00" max="2025-12-31T23:99" />
 		  	
          </label>
          <label>
             <span>End Date Time</span>
 
-		  	<input class="datetime-local" type="datetime-local" id="enddatetime" name="EndDateTime">
+		  	<input class="datetime-local" type="datetime-local" id="enddatetime" name="EndDateTime"  value="$endDateTime$"
+       min="2018-01-00T00:00" max="2025-12-31T23:99"    />
          
          </label>
          
          <label>
          <span>&nbsp;</span> 
-         <input type="submit" onClick="clicker()" class="button" value="Submit" /> 
-         <input type="button" class="button" onclick="window.history.back();" value="Main Menu">
+         <input type="button" onclick="submitMyForm('/interface/getValues');" class="button" value="Submit" /> 
+         <input type="button" class="button" onclick="submitMyForm('/ui/interface/mainMenu.html');" value="Main Menu">
          </label>  
          <input type="hidden" id="sessionId" name="sessionId" value="$sessionId$" />
          <span id="msg">&nbsp;</span> 
