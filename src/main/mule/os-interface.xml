@@ -218,12 +218,12 @@ output text/plain
 ---
 "<div class=\"rTable\"><div class=\"rTableRow\">" ++
 "<div class=\"rTableHead\"><strong>Key</strong></div>
-<div class=\"rTableHead\"><strong>creationTime</strong></div>
-<div class=\"rTableHead\"><strong>path</strong></div>
-<div class=\"rTableHead\"><strong>payload</strong></div>
-<div class=\"rTableHead\"><strong>retryCount</strong></div>
-<div class=\"rTableHead\"><strong>correlationId</strong></div>
-<div class=\"rTableHead\"><strong>splunkInterface</strong></div>" ++ 
+<div class=\"rTableHead\"><strong>Creation TimeStamp</strong></div>
+<div class=\"rTableHead\"><strong>Path</strong></div>
+<div class=\"rTableHead\"><strong>Payload</strong></div>
+<div class=\"rTableHead\"><strong>Retry Count</strong></div>
+<div class=\"rTableHead\"><strong>Correlation Id</strong></div>
+<div class=\"rTableHead\"><strong>Splunk Interface</strong></div>" ++ 
 "</div>" ++ 
 ((payload pluck(v,k,i)->(
  "<div class=\"rTableRow\">\n" ++ 
