@@ -1,6 +1,6 @@
 html,body{
   margin:0px;
-	padding:0px;
+  padding:0px;
     background-color: #D2E9FF;
 }
 
@@ -14,7 +14,7 @@ html,body{
 .stopnav div {
    float: left;
    border:1px solid lightgray;
-  color: #000000;
+  color: #
   text-align: center;
   padding: 4px 16px;
   text-decoration: none;
@@ -45,6 +45,22 @@ html,body{
   font-size: 17px;
 }
 
+.rTableCells, .rTableHeads {
+   display: table-cell;
+   font-size: 10px;
+   padding: 1px 1px;
+   border: 0px solid #999999; 
+}
+
+
+.topnav span {
+   float: right;
+  color: #000000;
+  text-align: center;
+  padding: 1px; 1px; 1px; 1px;
+  text-decoration: none;
+  font-size: 12px;
+}
 
 
 .topnav div {
@@ -125,10 +141,14 @@ html,body{
 
 .rTable {
    display: table;
+   margin: 0
    width: 100%;
+  
+
 }
 .rTableRow {
    display: table-row;
+   margin: 0;
 }
 .rTableHeading {
    display: table-header-group;
@@ -136,7 +156,8 @@ html,body{
 }
 .rTableCell, .rTableHead {
    display: table-cell;
-   padding: 3px 10px;
+   font-size: 10px;
+   padding: 1px 1px;
    border: 1px solid #999999;
 }
 .rTableHeading {

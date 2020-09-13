@@ -23,53 +23,31 @@
 		           <a                href="#" onclick="submitMyForm('/interface/login');">Login</a>
 		         <a                href="#" onclick="submitMyForm('/interface/logout');">Logout</a>
 		         <a   class="active"              href="#" onclick="submitMyForm('/interface/getOSValuesForm');">ObjectStore Values</a>
-		         <div>$message$ </div>
+		    		         <span>
+             <TABLE class="rTable">
+            <TR  class="rTableRow"><TD class="rTableCells">User:</TD>
+              <TD class="rTableCells">$user$</TD></TR>
+              <TR class="rTableRow"><TD class="rTableCells">Env:</TD>
+              <TD class="rTableCells">$env$</TD>
+              </TR>
+             </TABLE></span>
 		  </div>
-
- <div class="stopnav">
-      
-      <div onclick="submitMyForm('/interface/getOSValuesForm');">Back</div>
-      <div onclick="window.scrollTo(0,document.body.scrollHeight);">Bottom</div>
-      <div onclick="window.scrollTo(0, 0);">Top</div>
-      <div onclick="if(confirm('Are you sure you want to reload?')){window.location.reload();}">Reload</div>
-      <div onclick="window.open('/api/getOSValues?startDateTime=$startDateTime$&endDateTime=$endDateTime$','JSon Export','width=800,height=500')">Export</div>
-       
-      
-      
-      </div>
-		  
 	
 <div style="padding-left:16px">
   <h2>Deck Commerce Object Store Keys ($countKeys$)</h2>
-  <p>Click on the Payload button...</p>
+
 </div>
 
-&nbsp;
-
-$objectStoresResponse$
-
-&nbsp;
-
-    <div class="stopnav">
-      <div onclick="submitMyForm('/interface/getOSValuesForm');">Back</div>
-
-      <div onclick="window.scrollTo(0,document.body.scrollHeight);">Bottom</div>
-      <div onclick="window.scrollTo(0, 0);">Top</div>
-      <div onclick="if(confirm('Are you sure you want to reload?')){window.location.reload();}">Reload</div>
- <div onclick="window.open('/api/getOSValues?startDateTime=$startDateTime$&endDateTime=$endDateTime$','JSon Export','width=800,height=500')">Export</div>
-      </div>  
-  
-    
+  $gridtoolbar$
+  $objectStoresResponse$
+  $gridtoolbar$
+     
 <input type="hidden" id="sessionId" name="sessionId" value="$sessionId$" />
          <input type="hidden" id="msg" name="msg" value=""  />
 
         <input type="hidden" id="startDateTime" name="StartDateTime" value="$startDateTime$"  />
         <input type="hidden" id="endDateTime" name="EndDateTime" value="$endDateTime$"  />
-        
-
- <script> 
-   
-    </script> 
+ 
 </form>
 </body>
 </html>

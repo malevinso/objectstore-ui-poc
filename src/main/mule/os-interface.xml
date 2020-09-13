@@ -35,9 +35,9 @@ attributes.requestUri[3 to sizeOf(attributes.requestUri)-1]]]></ee:set-variable>
 		</os:retrieve>
 				<st:parse-template doc:name="vars.fileToLoad" doc:id="8973c8d0-8e3a-4ec2-86d1-eb6161fd76be" templateFile='#[vars.fileToLoad]' config-ref="St_Config" outputMimeType="text/html">
 			<st:maps>
-				<st:map key="message" value='#["Signed in as : " ++ (vars.user as String default "not signed in")]
-' />
+				<st:map key="user" value='#[vars.user as String default "none"]'/>
 						<st:map key="sessionId" value="#[vars.sessionId]" />
+						<st:map key="env" value='${mule.env}' />
 			</st:maps>
 		</st:parse-template>
 				<set-payload value="#[payload]" doc:name="text/html" doc:id="60e851fc-abf9-4837-a511-af0908ef53c0" mimeType="text/html"/>
@@ -56,9 +56,10 @@ attributes.requestUri[3 to sizeOf(attributes.requestUri)-1]]]></ee:set-variable>
 		<http:listener doc:name="/interface/login" doc:id="02861df6-6aed-47a8-8830-9855cc688d66" config-ref="HTTP_Listener_config" path="/interface/login"/>
 		<st:parse-template doc:name="Parse template" doc:id="401cbab4-695d-4340-952e-ceb43a47e78e" templateFile="/interface/getLoginForm.html" config-ref="St_Config">
 			<st:maps >
-				<st:map key="user" value='#[vars.user default ""]' />
+				<st:map key="user" value='#[vars.user default "none"]' />
 				<st:map key="pass" value='#[vars.pass default ""]' />
-				<st:map key="message" value='#[vars.message default ""]' />
+				<st:map key="user" value='#[vars.user default "none"]' />
+				<st:map key="env" value="${mule.env}" />
 			</st:maps>
 		</st:parse-template>
 		<set-payload value="#[payload]" doc:name="text/html" doc:id="7acc08ff-a6fe-4baf-9337-7d200a96a8f6" mimeType="text/html" />
@@ -75,17 +76,18 @@ output application/java
 if (!isEmpty(payload)) (if (!isEmpty(payload.sessionId)) payload.sessionId else "none") else "none"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="3f746392-d1d6-4350-b358-e1c2622576ee" message="SessionID #[vars.sessionId]"/>
 		<os:retrieve doc:name="userName" doc:id="1b7374fc-3e13-4e21-ba17-406300c3a69f" key='#[vars.sessionId default "none"]' objectStore="Object_store_Session" target="user">
 			<os:default-value><![CDATA[none]]></os:default-value>
 		</os:retrieve>
-		<logger level="INFO" doc:name="Logger" doc:id="0917ef5d-5982-4de3-883d-b94d92370f41" message="logger Dates: #[vars.startDateTime]   #[vars.endDateTime]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="0917ef5d-5982-4de3-883d-b94d92370f41" message="logger Dates: #[payload.StartDateTime]   #[payload.EndDateTime]"/>
 		<st:parse-template doc:name="Parse template" doc:id="5e645b67-769f-4634-91e7-1361a4f61394" config-ref="St_Config" templateFile="/interface/getOSValuesForm.html" >
 			<st:maps >
 				<st:map key="startDateTime" value="#[payload.StartDateTime default  (now() &gt;&gt; &quot;America/New_York&quot;) as String {format : &quot;yyyy-MM-dd'T'HH:mm&quot;} ]" />
 				<st:map key="endDateTime" value="#[payload.EndDateTime default  (now() &gt;&gt; &quot;America/New_York&quot;) as String {format : &quot;yyyy-MM-dd'T'HH:mm&quot;}]" />
-				<st:map key="message" value='#["Signed in as : " ++ (vars.user as String default "not signed in")]
-' />
+				<st:map key="user" value='#[vars.user default "none"]' />
 				<st:map key="sessionId" value='#[vars.sessionId default "none"]' />
+				<st:map key="env" value='${mule.env}' />
 			</st:maps>
 		</st:parse-template>
 		<set-payload value="#[payload]" doc:name="Copy_of_text/html" doc:id="9d41b7ad-0dfe-4889-8676-13645b2254f8" mimeType="text/html" />
@@ -202,6 +204,7 @@ output application/java
 payload.EndDateTime]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="e10abad5-9145-4d1c-b244-6ba24a4d5dee" message="GetValuesResponse: Start Date: #[vars.startDateTime]"/>
 		<os:retrieve doc:name="userName" doc:id="b91b4ba8-67d8-4992-8a35-68db9f30b5d5" key='#[vars.sessionId default "none"]' objectStore="Object_store_Session" target="user">
 			<os:default-value><![CDATA[none]]></os:default-value>
 		</os:retrieve>
@@ -242,15 +245,39 @@ output application/java
 sizeOf(payload) ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<st:parse-template doc:name="/interface/grid-toolbar.html" doc:id="edbad52e-480e-42e0-ae8e-180a743b1004" target="gridToolbar" templateFile="/interface/grid-toolbar.html" config-ref="St_Config">
+			<st:maps>
+				<st:map key="startDateTime" value='#[vars.startDateTime default ""]' />
+				<st:map key="endDateTime" value='#[vars.endDateTime default ""]' />
+			</st:maps>
+		</st:parse-template>
+		<ee:transform doc:name="Transform Message" doc:id="70e3913f-98c0-4d21-8778-d4deabfe8efa" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="osValues" ><![CDATA[%dw 2.0
+output application/java
+---
+if (vars.countKeys > 0) vars.osValues else "No keys found in this range <br> 
+  <input type=\"button\" class=\"button\" onclick=\"submitMyForm('/interface/getOSValuesForm');\" value=\"back\"/>
+  "]]></ee:set-variable>
+				<ee:set-variable variableName="gridToolbar" ><![CDATA[%dw 2.0
+output application/java
+---
+if (vars.countKeys > 0) vars.gridToolbar else ""]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
 		<st:parse-template doc:name="/interface/getOSValuesResponse.html" doc:id="c15acdd8-0438-477f-9648-04a288ebf9bb" config-ref="St_Config" templateFile="/interface/getOSValuesResponse.html">
 			<st:maps>
 				<st:map key="objectStoresResponse" value="#[vars.osValues]" />
 				<st:map key="sessionId" value='#[vars.sessionId default "none"]' />
 				<st:map key="countKeys" value="#[vars.countKeys default 0]" />
-				<st:map key="message" value='#["Signed in as : " ++ (vars.user as String default "not signed in")]
-' />
-				<st:map key="startDateTime" value='#[vars.startDateTime default ""]' />
-				<st:map key="endDateTime" value='#[vars.endDateTime default ""]' />
+				<st:map key="user" value='#[(vars.user as String default "none")]' />
+				<st:map key="env" value='${mule.env}' />
+				<st:map key="startDateTime" value="#[vars.startDateTime default  (now() &gt;&gt; &quot;America/New_York&quot;) as String {format : &quot;yyyy-MM-dd'T'HH:mm&quot;} ]" />
+				<st:map key="endDateTime" value="#[vars.endDateTime default  (now() &gt;&gt; &quot;America/New_York&quot;) as String {format : &quot;yyyy-MM-dd'T'HH:mm&quot;}]" />
+				
+				<st:map key="gridtoolbar" value="#[vars.gridToolbar]" />
 			</st:maps>
 		</st:parse-template>
 		<set-payload value="#[payload]" doc:name="text/html" doc:id="83b0c423-83b8-4086-9e3b-a90e4019a5a4" mimeType="text/html" />

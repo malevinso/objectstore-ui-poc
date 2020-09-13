@@ -21,7 +21,14 @@
 		           <a                href="#" onclick="submitMyForm('/interface/login');">Login</a>
 		         <a                href="#" onclick="submitMyForm('/interface/logout');">Logout</a>
 		         <a   class="active"              href="#" onclick="submitMyForm('/interface/getOSValuesForm');">ObjectStore Values</a>
-		         <div>$message$ </div>
+		     		         <span>
+             <TABLE class="rTable">
+              <TR  class="rTableRow"><TD class="rTableCells">User:</TD>
+              <TD class="rTableCells">$user$</TD></TR>
+              <TR class="rTableRow"><TD class="rTableCells">Env:</TD>
+              <TD class="rTableCells">$env$</TD>
+              </TR>
+             </TABLE></span>
 		  </div>
 	
 

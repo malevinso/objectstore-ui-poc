@@ -1,3 +1,4 @@
+
 <html>
    <head>
       <link rel="stylesheet" type="text/css" href="/ui/interface/gui.css" />
@@ -16,27 +17,33 @@
          };
       </script>
       <form id="form" class="elegant-aero" action="/" method="post">
-		  <div class="topnav">
+  	  <div class="topnav">
 		         <a class="active" href="#" onclick="submitMyForm('/ui/interface/mainMenu.html');">Home</a>
 		         <a                href="#" onclick="submitMyForm('/interface/login');">Login</a>
 		         <a                href="#" onclick="submitMyForm('/interface/logout');">Logout</a>
 		         <a                href="#" onclick="submitMyForm('/interface/getOSValuesForm');">ObjectStore Values</a>
-		         <div>$message$ </div>
-		  </div>
-	
+		         <span>
+             <TABLE class="rTable">
+             <TR  class="rTableRow"><TD class="rTableCells">User:</TD>
+              <TD class="rTableCells">$user$</TD></TR>
+              <TR class="rTableRow"><TD class="rTableCells">Env:</TD>
+              <TD class="rTableCells">$env$</TD>
+              </TR>
+             </TABLE></span>
+		 </div>
+
 		  <div style="padding-left:16px">
 		    <h2>Deck Commerce Object Store Main Menu</h2>
-		
+
      <container>
         <h4> ObjectStore V2 use Cases </h4>
-        <img src="https://docs.mulesoft.com/object-store/_images/osv2-architecture.png" alt="Italian Trulli">
+        <img border="2" src="https://docs.mulesoft.com/object-store/_images/osv2-architecture.png" alt="OjbectStore V2 Use Cases">
        </container>
 
-
 		  </div>
+
 		  <input type="hidden" id="sessionId" name="sessionId" value="$sessionId$"  />
-		  
-		  <input type="hidden" id="msg" name="msg" value=""  />
+ 	  <input type="hidden" id="msg" name="msg" value=""  />
       </form>
    </body>
 </html>

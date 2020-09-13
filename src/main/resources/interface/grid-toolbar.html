@@ -1,0 +1,8 @@
+<div class="stopnav">
+      
+      <div onclick="submitMyForm('/interface/getOSValuesForm');">Back</div>
+      <div onclick="window.scrollTo(0,document.body.scrollHeight);">Bottom</div>
+      <div onclick="window.scrollTo(0, 0);">Top</div>
+      <div onclick="if(confirm('Are you sure you want to reload?')){window.location.reload();}">Reload</div>
+      <div onclick="window.open('/api/getOSValues?startDateTime=$startDateTime$&endDateTime=$endDateTime$','JSon Export','width=800,height=500')">Export</div>
+</div>
